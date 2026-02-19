@@ -2,7 +2,7 @@
 <html lang="da">
 <head>
 <meta charset="UTF-8">
-<title>Dansk Strukturtræner — 6 Формул</title>
+<title>Dansk Strukturtræner — Полный</title>
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -66,24 +66,33 @@ button {
   font-size: 14px;
   opacity: 0.9;
 }
+
+#loader {
+  text-align: center;
+}
 </style>
 </head>
 <body>
 
 <div id="loader">
-  <input type="file" id="jsonFile" accept=".json">
-  <br>
-  <button id="startBtn">Start</button>
+  <h2>Загрузка заданий...</h2>
+  <p>Если автозагрузка не сработает, выберите JSON файл:</p>
+  <input type="file" id="jsonFile" accept=".json"><br>
+  <button id="startBtn">Начать вручную</button>
+  <br><br>
+  <!-- Кнопка экзамена всегда доступна -->
+  <button id="startExamBtn">Начать экзамен</button>
 </div>
 
 <div class="wrapper" id="game" style="display:none;">
 
-  <div class="trainer">
-    <div id="question"></div>
-    <div id="options"></div>
-    <div id="progress"></div>
-    <div id="liveStats"></div>
-  </div>
+	<div class="trainer">
+	  <div id="question"></div>
+	  <div id="options"></div>
+	  <div id="progress"></div>
+	  <div id="liveStats"></div>
+	  <button id="examBtnInGame">Экзамен</button> <!-- Кнопка прямо в процессе -->
+	</div>
 
   <div class="rulesBox">
     <h3>Правило</h3>
@@ -93,21 +102,10 @@ button {
 </div>
 
 <script>
-let levels = [];
+let levels = [];       // обычные задания (формулы 1–6)
+let examLevels = [];   // экзамен (формула 99)
 let current = 0;
-let stats = {
-  correct: 0,
-  wrong: 0,
-  byFormula: {}
-};
-
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
+let stats = { correct: 0, wrong: 0, byFormula: {} };
 
 const rules = {
   1: `
@@ -150,39 +148,63 @@ const rules = {
 
 const JSON_URL = "1.json"; // ссылка на JSON с сервера
 
+// ===== Перемешивание =====
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// ===== Автозагрузка JSON =====
 function loadJSONFromServer() {
   fetch(JSON_URL)
     .then(res => {
       if (!res.ok) throw new Error("Не удалось загрузить JSON: " + res.status);
       return res.json();
     })
-    .then(data => {
-      initGame(data);
-    })
+    .then(data => initGame(data))
     .catch(err => {
-      console.warn("Ошибка загрузки с сервера:", err.message);
+      console.warn("Ошибка автозагрузки:", err.message);
       document.getElementById("loader").style.display = "block";
-      alert("Автозагрузка с сервера не удалась. Загрузите JSON вручную.");
+      alert("Автозагрузка с сервера не удалась. Можно загрузить JSON вручную.");
     });
 }
 
+// ===== Ручная загрузка JSON =====
 document.getElementById("startBtn").onclick = () => {
   const fileInput = document.getElementById("jsonFile");
-  if (!fileInput.files[0]) {
-    alert("Выберите JSON файл");
-    return;
-  }
+  if (!fileInput.files[0]) return alert("Выберите JSON файл");
 
   const reader = new FileReader();
   reader.onload = e => {
-    const data = JSON.parse(e.target.result);
-    initGame(data);
+    try {
+      const data = JSON.parse(e.target.result);
+      initGame(data);
+    } catch (err) {
+      alert("Ошибка в формате JSON: " + err.message);
+    }
   };
   reader.readAsText(fileInput.files[0]);
 };
 
+// ===== Кнопка экзамена во время обучения =====
+document.getElementById("examBtnInGame").onclick = () => {
+  if (!examLevels.length) {
+    alert("⚠ Заданий для экзамена нет в этом JSON");
+    return;
+  }
+
+  current = 0;
+  stats = { correct: 0, wrong: 0, byFormula: { 99: { correct: 0, wrong: 0 } } };
+  showQuestion(true, [...examLevels]);
+};
+
+// ===== Инициализация игры =====
 function initGame(data) {
-  levels = shuffle(data);
+  levels = shuffle(data.filter(q => q.formula >= 1 && q.formula <= 6)); // обычные задания
+  examLevels = shuffle(data.filter(q => q.formula === 99));               // экзамен
   current = 0;
   stats = { correct: 0, wrong: 0, byFormula: {} };
 
@@ -192,43 +214,36 @@ function initGame(data) {
   showQuestion();
 }
 
-// Запускаем автозагрузку сразу при старте страницы
-window.addEventListener("load", () => {
-  loadJSONFromServer();
-});
+// ===== Показ вопроса =====
+function showQuestion(isExam = false, customLevels = null) {
+  const source = customLevels || levels;
+  const q = source[current];
+  document.getElementById("question").innerHTML = "<h2>" + q.question + "</h2>";
 
-
-function showQuestion() {
-  const q = levels[current];
-
-  document.getElementById("question").innerHTML =
-    "<h2>" + q.question + "</h2>";
-
-  document.getElementById("ruleText").innerHTML =
-    rules[q.formula] || "Нет правила для этой формулы";
+  // показываем правило только для обычных заданий
+  document.getElementById("ruleText").innerText =
+    (!isExam && q.formula !== 99) ? (rules[q.formula] || "") : "";
 
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
-
   shuffle([...q.options]).forEach(opt => {
     const div = document.createElement("div");
     div.className = "option";
     div.innerText = opt;
-    div.onclick = () => checkAnswer(opt, div, q);
+    div.onclick = () => checkAnswer(opt, div, q, isExam, source);
     optionsDiv.appendChild(div);
   });
 
-  updateProgress();
+  document.getElementById("progress").innerText = `Вопрос ${current + 1} из ${source.length}`;
   updateLiveStats(q.formula);
 }
 
-function checkAnswer(selected, btn, q) {
+// ===== Проверка ответа =====
+function checkAnswer(selected, btn, q, isExam = false, source = null) {
   const correct = q.answer;
   const optionsDiv = document.getElementById("options");
 
-  if (!stats.byFormula[q.formula]) {
-    stats.byFormula[q.formula] = { correct: 0, wrong: 0 };
-  }
+  if (!stats.byFormula[q.formula]) stats.byFormula[q.formula] = { correct: 0, wrong: 0 };
 
   if (selected === correct) {
     btn.classList.add("correct");
@@ -238,53 +253,52 @@ function checkAnswer(selected, btn, q) {
     btn.classList.add("wrong");
     stats.wrong++;
     stats.byFormula[q.formula].wrong++;
-
-    Array.from(optionsDiv.children).forEach(c => {
-      if (c.innerText === correct) {
-        c.classList.add("correct");
-      }
-    });
+    if (!isExam) {
+      Array.from(optionsDiv.children).forEach(c => {
+        if (c.innerText === correct) c.classList.add("correct");
+      });
+    }
   }
 
   updateLiveStats(q.formula);
 
   setTimeout(() => {
     current++;
-    if (current < levels.length) {
-      showQuestion();
-    } else {
-      document.querySelector(".trainer").innerHTML =
-        "<h2>Готово 🎉</h2><p>Правильно: " + stats.correct +
-        " | Ошибки: " + stats.wrong + "</p>" +
-        "<button onclick='location.reload()'>Снова</button>";
-      document.getElementById("ruleText").innerHTML = "";
-    }
+    const arr = source || levels;
+    if (current < arr.length) showQuestion(isExam, source);
+    else showEnd(isExam);
   }, 900);
 }
 
-function updateProgress() {
-  document.getElementById("progress").innerText =
-    `Вопрос ${current + 1} из ${levels.length}`;
-}
-
-function updateLiveStats(currentFormula) {
+// ===== Статистика =====
+function updateLiveStats(curFormula) {
   const total = stats.correct + stats.wrong;
-  const percent = total === 0 ? 0 :
-    Math.round((stats.correct / total) * 100);
-
-  const formulaData = stats.byFormula[currentFormula] || 
-    { correct: 0, wrong: 0 };
-
+  const percentage = total ? Math.round((stats.correct / total) * 100) : 0;
+  const f = stats.byFormula[curFormula] || { correct: 0, wrong: 0 };
   document.getElementById("liveStats").innerHTML = `
     <hr>
-    ✔ Правильных: ${stats.correct} |
+    ✔ Правильно: ${stats.correct} |
     ❌ Ошибок: ${stats.wrong} |
-    📊 ${percent}% <br>
-    Формула ${currentFormula}: 
-    ✔ ${formulaData.correct} | 
-    ❌ ${formulaData.wrong}
+    📊 ${percentage}%<br>
+    Формула ${curFormula}: ✔${f.correct} | ❌${f.wrong}
   `;
 }
+
+// ===== Конец игры =====
+function showEnd(isExam = false) {
+  document.querySelector(".trainer").innerHTML = `
+    <h2>${isExam ? "Экзамен завершён! 🎓" : "Готово! 🎉"}</h2>
+    <p>Правильно: ${stats.correct}</p>
+    <p>Ошибок: ${stats.wrong}</p>
+    <button onclick="location.reload()">Снова</button>
+  `;
+  document.getElementById("ruleText").innerText = "";
+}
+
+// ===== Автозагрузка при старте страницы =====
+window.addEventListener("load", () => {
+  loadJSONFromServer();
+});
 </script>
 
 </body>

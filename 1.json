@@ -39,5 +39,27 @@
   {"formula":6,"question":"Hun bliver ___, for hun er træt","options":["sur","arbejde","komme"],"answer":"sur"},
   {"formula":6,"question":"Vi kan ___ i morgen, men ikke i dag","options":["komme","træt","er"],"answer":"komme"},
   {"formula":6,"question":"Han sagde, at han ikke ___ hjælpe","options":["kunne","kan","kun"],"answer":"kunne"},
-  {"formula":6,"question":"Jeg er glad for, at du ___","options":["kommer","kom","komme"],"answer":"kommer"}
+  {"formula":6,"question":"Jeg er glad for, at du ___","options":["kommer","kom","komme"],"answer":"kommer"},
+  
+  {"formula":99,"question":"Hvis han ___ hurtigt, når toget ikke går","options":["kommer","kom","komme"],"answer":"kommer"},
+  {"formula":99,"question":"At hun ___ glad, overraskede alle","options":["er","bliver","var"],"answer":"er"},
+  {"formula":99,"question":"Jeg ved, at de ___ ikke arbejdet i går","options":["har","har haft","havde"],"answer":"har haft"},
+  {"formula":99,"question":"Hvorfor ___ du ikke sendt brevet til tiden?","options":["har","havde","sender"],"answer":"har"},
+  {"formula":99,"question":"Selvom han ___ træt, arbejdede han videre","options":["er","var","bliver"],"answer":"var"},
+  {"formula":99,"question":"Hvis hun ___ hjemme, kunne vi tale sammen","options":["er","var","bliver"],"answer":"er"},
+  {"formula":99,"question":"Jeg vidste ikke, at han ___ så hurtigt væk","options":["løber","løb","løbet"],"answer":"løb"},
+  {"formula":99,"question":"Selvom de ___ forsinkede, nåede mødet i tide","options":["er","var","bliver"],"answer":"var"},
+  {"formula":99,"question":"Hvorfor ___ du ikke spist morgenmad?","options":["har","havde","spiser"],"answer":"har"},
+  {"formula":99,"question":"At vi ___ så hurtigt, var alle overraskede","options":["løber","løb","løbet"],"answer":"løb"},
+  {"formula":99,"question":"Hvis hun ___ bogen, ville hun forstå historien bedre","options":["læser","læste","har læst"],"answer":"læste"},
+  {"formula":99,"question":"At han ___ så hurtigt, gjorde alle forvirrede","options":["løber","løb","har løbet"],"answer":"løb"},
+  {"formula":99,"question":"Jeg ved, at vi ___ for sent i går","options":["kom","er kommet","havde kommet"],"answer":"kom"},
+  {"formula":99,"question":"Hvorfor ___ du ikke svaret i tide?","options":["har sendt","havde sendt","sender"],"answer":"har sendt"},
+  {"formula":99,"question":"Selvom de ___ trætte, fortsatte de arbejdet","options":["er","var","har været"],"answer":"var"},
+  {"formula":99,"question":"Hvis vi ___ tidligere, kunne vi have nået toget","options":["går","gik","er gået"],"answer":"gik"},
+  {"formula":99,"question":"At hun ___ så glad, overraskede alle hendes venner","options":["bliver","er","var"],"answer":"er"},
+  {"formula":99,"question":"Jeg vidste ikke, at han ___ hjemme hele dagen","options":["blev","var","er"],"answer":"var"},
+  {"formula":99,"question":"Selvom jeg ___ syg, gik jeg på arbejde","options":["er","var","bliver"],"answer":"var"},
+  {"formula":99,"question":"Hvorfor ___ han ikke fulgt instruktionerne korrekt?","options":["har","havde","følger"],"answer":"har"}
+	
 ]
