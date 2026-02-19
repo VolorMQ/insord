@@ -1,0 +1,43 @@
+[
+
+  {"formula":1,"question":"Han er ___","options":["træt","arbejde","komme"],"answer":"træt"},
+  {"formula":1,"question":"Hun bliver ___","options":["sur","læse","kan"],"answer":"sur"},
+  {"formula":1,"question":"De er ___","options":["glade","skal","ikke"],"answer":"glade"},
+  {"formula":1,"question":"Vi bliver ___","options":["sultne","arbejde","vil"],"answer":"sultne"},
+  {"formula":1,"question":"Jeg er ___ i dag","options":["tilfreds","komme","skal"],"answer":"tilfreds"},
+
+
+  {"formula":2,"question":"Jeg vil ___","options":["arbejde","træt","er"],"answer":"arbejde"},
+  {"formula":2,"question":"Han kan ___","options":["komme","sur","bliver"],"answer":"komme"},
+  {"formula":2,"question":"Vi skal ___ nu","options":["gå","glade","er"],"answer":"gå"},
+  {"formula":2,"question":"Hun må ___ hjemme","options":["blive","træt","er"],"answer":"blive"},
+  {"formula":2,"question":"De vil ___ senere","options":["ringe","glad","ikke"],"answer":"ringe"},
+
+
+  {"formula":3,"question":"Jeg ved, at han ___","options":["ikke kommer","kommer ikke","ikke kom"],"answer":"ikke kommer"},
+  {"formula":3,"question":"Hun siger, at hun ___","options":["ikke har tid","har ikke tid","ikke havde tid"],"answer":"ikke har tid"},
+  {"formula":3,"question":"Vi tror, at de ___","options":["ikke er hjemme","er ikke hjemme","ikke var hjemme"],"answer":"ikke er hjemme"},
+  {"formula":3,"question":"Han sagde, at han ___","options":["ikke kunne komme","kunne ikke komme","ikke kan komme"],"answer":"ikke kunne komme"},
+  {"formula":3,"question":"Jeg ved, hvorfor hun ___","options":["ikke gik","gik ikke","ikke går"],"answer":"ikke gik"},
+
+
+  {"formula":4,"question":"Jeg gik hjem, ___ jeg var træt","options":["for","men","at"],"answer":"for"},
+  {"formula":4,"question":"Han ville hjælpe, ___ han var syg","options":["men","for","at"],"answer":"men"},
+  {"formula":4,"question":"Hun blev hjemme, ___ hun var syg","options":["for","men","at"],"answer":"for"},
+  {"formula":4,"question":"Jeg ringede, ___ ingen svarede","options":["men","for","at"],"answer":"men"},
+  {"formula":4,"question":"Vi tog toget, ___ bilen var i stykker","options":["for","men","at"],"answer":"for"},
+
+
+  {"formula":5,"question":"Jeg har lyst til ___","options":["at rejse","bliver","sur"],"answer":"at rejse"},
+  {"formula":5,"question":"Hun har tid til ___","options":["at læse","er","træt"],"answer":"at læse"},
+  {"formula":5,"question":"De er bange for ___","options":["at fejle","bliver","glad"],"answer":"at fejle"},
+  {"formula":5,"question":"Jeg er glad for ___","options":["dig","ikke","vil"],"answer":"dig"},
+  {"formula":5,"question":"Vi har lyst til ___ i weekenden","options":["at slappe af","er","sur"],"answer":"at slappe af"},
+
+
+  {"formula":6,"question":"Jeg ved, at han ikke ___","options":["kommer","kom","komme"],"answer":"kommer"},
+  {"formula":6,"question":"Hun bliver ___, for hun er træt","options":["sur","arbejde","komme"],"answer":"sur"},
+  {"formula":6,"question":"Vi kan ___ i morgen, men ikke i dag","options":["komme","træt","er"],"answer":"komme"},
+  {"formula":6,"question":"Han sagde, at han ikke ___ hjælpe","options":["kunne","kan","kun"],"answer":"kunne"},
+  {"formula":6,"question":"Jeg er glad for, at du ___","options":["kommer","kom","komme"],"answer":"kommer"}
+]

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<title>Dansk Strukturtræner — 6 Формул</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1e1e1e, #2f2f2f);
+  color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.wrapper {
+  display: flex;
+  gap: 20px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.trainer {
+  background: #222;
+  padding: 20px;
+  border-radius: 12px;
+  flex: 2;
+}
+
+.rulesBox {
+  background: #333;
+  padding: 15px;
+  border-radius: 12px;
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.option {
+  background: #444;
+  margin: 6px 0;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.option:hover { background: #555; }
+
+.correct { background: #2e7d32 !important; }
+.wrong { background: #c62828 !important; }
+
+button {
+  background: #ff5555;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
+}
+
+#liveStats {
+  margin-top: 15px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <input type="file" id="jsonFile" accept=".json">
+  <br>
+  <button id="startBtn">Start</button>
+</div>
+
+<div class="wrapper" id="game" style="display:none;">
+
+  <div class="trainer">
+    <div id="question"></div>
+    <div id="options"></div>
+    <div id="progress"></div>
+    <div id="liveStats"></div>
+  </div>
+
+  <div class="rulesBox">
+    <h3>Правило</h3>
+    <div id="ruleText"></div>
+  </div>
+
+</div>
+
+<script>
+let levels = [];
+let current = 0;
+let stats = {
+  correct: 0,
+  wrong: 0,
+  byFormula: {}
+};
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+const rules = {
+  1: `
+🟢 Формула 1  
+слова "er" и "bliver" показывают состояние. 
+
+Когда в датском языке встретишь слова "er" (это как наше "есть" или "является") или "bliver" (это значит "становится"), дальше идёт словечко-описание. Это слово говорит, какой кто-то становится или как себя чувствует.
+`,
+  2: `
+🔵 Формула 2  
+после vil/kan/skal/må идёт действие. 
+
+Если видишь слова vil, kan, skal, må – думай, что это как наши «хочу», «умею», «должен», «разрешается». После них всегда идёт слово, которое говорит, что делать (то есть действие).
+`,
+  3: `
+🟣 Формула 3  
+слова "at", "fordi", "hvorfor" – ставим ikke перед глаголом. 
+
+Слова "at" (как «что»), "fordi" («потому что») и "hvorfor" («почему») часто соединяют две мысли. Когда их используем, обычно перед действием (глаголом) ставим ikke (это «не»). Так мы делаем отрицание.
+`,
+  4: `
+🟡 Формула 4  
+"for/fordi" и "men" – «потому что» и «но». 
+
+Слова "for" или "fordi" говорят нам «потому что», когда объясняем причину. А слово "men" значит «но», когда хотим показать контраст (противоположную мысль).
+`,
+  5: `
+🟠 Формула 5  
+после til или for часто идёт "at" + глагол. 
+
+Слово "til" или "for" часто говорит, что дальше будет «to do something». То есть мы добавляем "at" и действие. Это как «чтобы что-то сделать».
+`,
+  6: `
+🟤 Формула 6  
+в длинных предложениях глагол ставим в конец. 
+
+Если мы строим сложное предложение (например, с "что" или "потому что"), то в части после этих слов главный глагол обычно идёт в самый конец.
+`
+};
+
+const JSON_URL = "1.json"; // ссылка на JSON с сервера
+
+function loadJSONFromServer() {
+  fetch(JSON_URL)
+    .then(res => {
+      if (!res.ok) throw new Error("Не удалось загрузить JSON: " + res.status);
+      return res.json();
+    })
+    .then(data => {
+      initGame(data);
+    })
+    .catch(err => {
+      console.warn("Ошибка загрузки с сервера:", err.message);
+      document.getElementById("loader").style.display = "block";
+      alert("Автозагрузка с сервера не удалась. Загрузите JSON вручную.");
+    });
+}
+
+document.getElementById("startBtn").onclick = () => {
+  const fileInput = document.getElementById("jsonFile");
+  if (!fileInput.files[0]) {
+    alert("Выберите JSON файл");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    const data = JSON.parse(e.target.result);
+    initGame(data);
+  };
+  reader.readAsText(fileInput.files[0]);
+};
+
+function initGame(data) {
+  levels = shuffle(data);
+  current = 0;
+  stats = { correct: 0, wrong: 0, byFormula: {} };
+
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("game").style.display = "flex";
+
+  showQuestion();
+}
+
+// Запускаем автозагрузку сразу при старте страницы
+window.addEventListener("load", () => {
+  loadJSONFromServer();
+});
+
+
+function showQuestion() {
+  const q = levels[current];
+
+  document.getElementById("question").innerHTML =
+    "<h2>" + q.question + "</h2>";
+
+  document.getElementById("ruleText").innerHTML =
+    rules[q.formula] || "Нет правила для этой формулы";
+
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+
+  shuffle([...q.options]).forEach(opt => {
+    const div = document.createElement("div");
+    div.className = "option";
+    div.innerText = opt;
+    div.onclick = () => checkAnswer(opt, div, q);
+    optionsDiv.appendChild(div);
+  });
+
+  updateProgress();
+  updateLiveStats(q.formula);
+}
+
+function checkAnswer(selected, btn, q) {
+  const correct = q.answer;
+  const optionsDiv = document.getElementById("options");
+
+  if (!stats.byFormula[q.formula]) {
+    stats.byFormula[q.formula] = { correct: 0, wrong: 0 };
+  }
+
+  if (selected === correct) {
+    btn.classList.add("correct");
+    stats.correct++;
+    stats.byFormula[q.formula].correct++;
+  } else {
+    btn.classList.add("wrong");
+    stats.wrong++;
+    stats.byFormula[q.formula].wrong++;
+
+    Array.from(optionsDiv.children).forEach(c => {
+      if (c.innerText === correct) {
+        c.classList.add("correct");
+      }
+    });
+  }
+
+  updateLiveStats(q.formula);
+
+  setTimeout(() => {
+    current++;
+    if (current < levels.length) {
+      showQuestion();
+    } else {
+      document.querySelector(".trainer").innerHTML =
+        "<h2>Готово 🎉</h2><p>Правильно: " + stats.correct +
+        " | Ошибки: " + stats.wrong + "</p>" +
+        "<button onclick='location.reload()'>Снова</button>";
+      document.getElementById("ruleText").innerHTML = "";
+    }
+  }, 900);
+}
+
+function updateProgress() {
+  document.getElementById("progress").innerText =
+    `Вопрос ${current + 1} из ${levels.length}`;
+}
+
+function updateLiveStats(currentFormula) {
+  const total = stats.correct + stats.wrong;
+  const percent = total === 0 ? 0 :
+    Math.round((stats.correct / total) * 100);
+
+  const formulaData = stats.byFormula[currentFormula] || 
+    { correct: 0, wrong: 0 };
+
+  document.getElementById("liveStats").innerHTML = `
+    <hr>
+    ✔ Правильных: ${stats.correct} |
+    ❌ Ошибок: ${stats.wrong} |
+    📊 ${percent}% <br>
+    Формула ${currentFormula}: 
+    ✔ ${formulaData.correct} | 
+    ❌ ${formulaData.wrong}
+  `;
+}
+</script>
+
+</body>
+</html>
