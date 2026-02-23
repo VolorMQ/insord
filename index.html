@@ -233,6 +233,7 @@ function shuffle(array) {
 function loadJSONFromServer() {
   const jsonList = document.getElementById("jsonList");
   const startBtn = document.getElementById("startExamBtn");
+  const examBtn = document.getElementById("examBtnInGame");
 
   files.forEach(file => {
     const btn = document.createElement("div");
@@ -242,7 +243,6 @@ function loadJSONFromServer() {
     btn.onclick = () => {
       selectedFile = file;
 
-      // убираем подсветку у других кнопок
       document.querySelectorAll("#jsonList .option").forEach(o => o.classList.remove("correct"));
       btn.classList.add("correct");
 
@@ -251,27 +251,27 @@ function loadJSONFromServer() {
         .then(res => res.json())
         .then(data => {
           loadedData = data;
-          startBtn.disabled = false; // включаем кнопку, когда данные готовы
-          console.log("JSON загружен:", loadedData);
+          startBtn.disabled = false;
+          examBtn.disabled = false;
+
+          // сразу стартуем обучение
+          initGame(loadedData, false); // false = обычное обучение
         })
         .catch(err => {
           loadedData = null;
           startBtn.disabled = true;
+          examBtn.disabled = true;
           alert("Ошибка загрузки JSON: " + err);
         });
     };
 
-    // ВАЖНО: добавляем кнопку в контейнер
     jsonList.appendChild(btn);
   });
 
+  // кнопка "Экзамен"
   startBtn.addEventListener("click", () => {
     if (!loadedData) return;
-
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("game").style.display = "flex";
-
-    // дальше используем loadedData как раньше
+    initGame(loadedData, true); // true = экзамен
   });
 }
 
@@ -284,7 +284,17 @@ document.getElementById("startBtn").onclick = () => {
   reader.onload = e => {
     try {
       const data = JSON.parse(e.target.result);
-      initGame(data);
+
+      // разделяем обычные задания и экзамен
+      levels = shuffle(data.filter(q => q.formula >= 1 && q.formula <= 6));
+      examLevels = shuffle(data.filter(q => q.formula === 99));
+      current = 0;
+      stats = { correct: 0, wrong: 0, byFormula: {} };
+
+      // сразу запускаем обучение
+      document.getElementById("loader").style.display = "none";
+      document.getElementById("game").style.display = "flex";
+      showQuestion(false); // false = обычное обучение
     } catch (err) {
       alert("Ошибка в формате JSON: " + err.message);
     }
@@ -299,28 +309,39 @@ document.getElementById("examBtnInGame").onclick = () => {
     return;
   }
 
+  // сбрасываем прогресс и статистику для экзамена
   current = 0;
   stats = { correct: 0, wrong: 0, byFormula: { 99: { correct: 0, wrong: 0 } } };
-  showQuestion(true, [...examLevels]);
+
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("game").style.display = "flex";
+
+  // показываем вопросы экзамена
+  showQuestion(true); // true = экзамен
 };
 
 // ===== Инициализация игры =====
-function initGame(data) {
-  levels = shuffle(data.filter(q => q.formula >= 1 && q.formula <= 6)); // обычные задания
-  examLevels = shuffle(data.filter(q => q.formula === 99));               // экзамен
+function initGame(data, isExam = false) {
+  levels = shuffle(data.filter(q => q.formula >= 1 && q.formula <= 6));
+  examLevels = shuffle(data.filter(q => q.formula === 99));
   current = 0;
   stats = { correct: 0, wrong: 0, byFormula: {} };
 
   document.getElementById("loader").style.display = "none";
   document.getElementById("game").style.display = "flex";
 
-  showQuestion();
+  showQuestion(isExam);
 }
 
 // ===== Показ вопроса =====
-function showQuestion(isExam = false, customLevels = null) {
-  const source = customLevels || levels;
+function showQuestion(isExam = false) {
+  const source = isExam ? examLevels : levels;
   const q = source[current];
+  if (!q) {
+    showEnd(isExam);
+    return;
+  }
+
   document.getElementById("question").innerHTML = "<h2>" + q.question + "</h2>";
 
   // показываем правило только для обычных заданий
@@ -368,7 +389,7 @@ function checkAnswer(selected, btn, q, isExam = false, source = null) {
   setTimeout(() => {
     current++;
     const arr = source || levels;
-    if (current < arr.length) showQuestion(isExam, source);
+    if (current < arr.length) showQuestion(isExam);
     else showEnd(isExam);
   }, 900);
 }
