@@ -242,25 +242,30 @@ function loadJSONFromServer() {
 		selectedFile = file;
 		document.querySelectorAll("#jsonList .option").forEach(o => o.classList.remove("correct"));
 		btn.classList.add("correct");
-		startBtn.disabled = false;
+
+		// загрузка JSON сразу при выборе
+		fetch(selectedFile)
+		  .then(res => res.json())
+		  .then(data => {
+			loadedData = data;
+			startBtn.disabled = false; // включаем кнопку, когда данные готовы
+			console.log("JSON загружен:", loadedData);
+		  })
+		  .catch(err => {
+			loadedData = null;
+			startBtn.disabled = true;
+			alert("Ошибка загрузки JSON: " + err);
+		  });
 	  };
-	  jsonList.appendChild(btn);
 	});
 
 	startBtn.addEventListener("click", () => {
-	  if (!selectedFile) return;
+	  if (!loadedData) return;
 
-	  fetch(selectedFile)
-		.then(res => res.json())
-		.then(data => {
-		  loadedData = data;
+	  document.getElementById("loader").style.display = "none";
+	  document.getElementById("game").style.display = "flex";
 
-		  document.getElementById("loader").style.display = "none";
-		  document.getElementById("game").style.display = "flex";
-
-		  // дальше используем loadedData, как раньше
-		})
-		.catch(err => alert("Ошибка загрузки JSON: " + err));
+	  // дальше используем loadedData как раньше
 	});
 }
 
