@@ -79,7 +79,7 @@ button {
   <h2>Выберите набор заданий:</h2>
   <div id="jsonList"></div>
   <br>
-  <p>Если автозагрузка не сработает, выберите JSON файл:</p>
+  <p>Если загрузка не сработает, выберите JSON файл:</p>
   <input type="file" id="jsonFile" accept=".json"><br>
   <button id="startBtn">Начать вручную</button>
   <br><br>
@@ -111,9 +111,6 @@ let current = 0;
 let stats = { correct: 0, wrong: 0, byFormula: {} };
 let selectedFile = null;
 let loadedData = null;
-
-const jsonList = document.getElementById("jsonList");
-const startBtn = document.getElementById("startExamBtn");
 
 const rules = {
   1: `
@@ -234,39 +231,48 @@ function shuffle(array) {
 
 // ===== Автозагрузка JSON =====
 function loadJSONFromServer() {
-	files.forEach(file => {
-	  const btn = document.createElement("div");
-	  btn.className = "option";
-	  btn.textContent = file.split("/").pop(); // имя файла
-	  btn.onclick = () => {
-		selectedFile = file;
-		document.querySelectorAll("#jsonList .option").forEach(o => o.classList.remove("correct"));
-		btn.classList.add("correct");
+  const jsonList = document.getElementById("jsonList");
+  const startBtn = document.getElementById("startExamBtn");
 
-		// загрузка JSON сразу при выборе
-		fetch(selectedFile)
-		  .then(res => res.json())
-		  .then(data => {
-			loadedData = data;
-			startBtn.disabled = false; // включаем кнопку, когда данные готовы
-			console.log("JSON загружен:", loadedData);
-		  })
-		  .catch(err => {
-			loadedData = null;
-			startBtn.disabled = true;
-			alert("Ошибка загрузки JSON: " + err);
-		  });
-	  };
-	});
+  files.forEach(file => {
+    const btn = document.createElement("div");
+    btn.className = "option";
+    btn.textContent = file.split("/").pop(); // имя файла
 
-	startBtn.addEventListener("click", () => {
-	  if (!loadedData) return;
+    btn.onclick = () => {
+      selectedFile = file;
 
-	  document.getElementById("loader").style.display = "none";
-	  document.getElementById("game").style.display = "flex";
+      // убираем подсветку у других кнопок
+      document.querySelectorAll("#jsonList .option").forEach(o => o.classList.remove("correct"));
+      btn.classList.add("correct");
 
-	  // дальше используем loadedData как раньше
-	});
+      // загрузка JSON сразу при выборе
+      fetch(selectedFile)
+        .then(res => res.json())
+        .then(data => {
+          loadedData = data;
+          startBtn.disabled = false; // включаем кнопку, когда данные готовы
+          console.log("JSON загружен:", loadedData);
+        })
+        .catch(err => {
+          loadedData = null;
+          startBtn.disabled = true;
+          alert("Ошибка загрузки JSON: " + err);
+        });
+    };
+
+    // ВАЖНО: добавляем кнопку в контейнер
+    jsonList.appendChild(btn);
+  });
+
+  startBtn.addEventListener("click", () => {
+    if (!loadedData) return;
+
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("game").style.display = "flex";
+
+    // дальше используем loadedData как раньше
+  });
 }
 
 // ===== Ручная загрузка JSON =====
