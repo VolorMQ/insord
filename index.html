@@ -76,6 +76,9 @@ button {
 
 <div id="loader">
   <h2>Загрузка заданий...</h2>
+  <h2>Выберите набор заданий:</h2>
+  <div id="jsonList"></div>
+  <br>
   <p>Если автозагрузка не сработает, выберите JSON файл:</p>
   <input type="file" id="jsonFile" accept=".json"><br>
   <button id="startBtn">Начать вручную</button>
@@ -215,7 +218,10 @@ til / for + at + глагол = цель действия
 };
 
 
-const JSON_URL = "1.json"; // ссылка на JSON с сервера
+const files = [
+  "1.json",
+  "2.json"
+];
 
 // ===== Перемешивание =====
 function shuffle(array) {
@@ -228,24 +234,18 @@ function shuffle(array) {
 
 // ===== Автозагрузка JSON =====
 function loadJSONFromServer() {
-	fetch("list.php")
-	  .then(res => res.json())
-	  .then(files => {
-		files.forEach(file => {
-		  const btn = document.createElement("div");
-		  btn.className = "option";
-		  btn.textContent = file;
-		  btn.onclick = () => {
-			selectedFile = file;
-			document.querySelectorAll("#jsonList .option").forEach(o => o.classList.remove("correct"));
-			btn.classList.add("correct");
-			startBtn.disabled = false;
-		  };
-		  jsonList.appendChild(btn);
-		});
-	  });
-
-	startBtn.disabled = true;
+	files.forEach(file => {
+	  const btn = document.createElement("div");
+	  btn.className = "option";
+	  btn.textContent = file.split("/").pop(); // имя файла
+	  btn.onclick = () => {
+		selectedFile = file;
+		document.querySelectorAll("#jsonList .option").forEach(o => o.classList.remove("correct"));
+		btn.classList.add("correct");
+		startBtn.disabled = false;
+	  };
+	  jsonList.appendChild(btn);
+	});
 
 	startBtn.addEventListener("click", () => {
 	  if (!selectedFile) return;
@@ -258,9 +258,9 @@ function loadJSONFromServer() {
 		  document.getElementById("loader").style.display = "none";
 		  document.getElementById("game").style.display = "flex";
 
-		  // дальше используешь loadedData как раньше
+		  // дальше используем loadedData, как раньше
 		})
-		.catch(() => alert("Ошибка загрузки JSON"));
+		.catch(err => alert("Ошибка загрузки JSON: " + err));
 	});
 }
 
