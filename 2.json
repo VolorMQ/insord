@@ -1,0 +1,97 @@
+[
+
+  {"formula":1,"question":"Han ___ træt efter arbejde","options":["er","bliver","har"],"answer":"er"},
+  {"formula":1,"question":"Hun ___ læge om to år","options":["er","bliver","kan"],"answer":"bliver"},
+  {"formula":1,"question":"Vi ___ klar nu","options":["er","bliver","vil"],"answer":"er"},
+  {"formula":1,"question":"Barnet ___ syg i går","options":["er","blev","kan"],"answer":"blev"},
+  {"formula":1,"question":"Det ___ svært at forstå","options":["er","bliver","skal"],"answer":"er"},
+  {"formula":1,"question":"Han ___ vred hurtigt","options":["er","bliver","har"],"answer":"bliver"},
+  {"formula":1,"question":"Hun ___ glad for nyheden","options":["er","bliver","må"],"answer":"er"},
+  {"formula":1,"question":"Vi ___ mere sikre med tiden","options":["er","bliver","kan"],"answer":"bliver"},
+  {"formula":1,"question":"Huset ___ gammelt","options":["er","bliver","vil"],"answer":"er"},
+  {"formula":1,"question":"Han ___ stærkere hver dag","options":["er","bliver","har"],"answer":"bliver"},
+
+
+  {"formula":2,"question":"Jeg ___ arbejde i morgen","options":["vil","arbejder","at arbejde"],"answer":"vil"},
+  {"formula":2,"question":"Hun ___ svømme godt","options":["kan","svømmer","at svømme"],"answer":"kan"},
+  {"formula":2,"question":"Vi ___ betale nu","options":["skal","betaler","at betale"],"answer":"skal"},
+  {"formula":2,"question":"Du ___ gå hjem","options":["må","går","at gå"],"answer":"må"},
+  {"formula":2,"question":"Han ___ lære dansk","options":["vil","lærer","at lære"],"answer":"vil"},
+  {"formula":2,"question":"Hun ___ forstå problemet","options":["kan","forstår","at forstå"],"answer":"kan"},
+  {"formula":2,"question":"Vi ___ finde en løsning","options":["skal","finder","at finde"],"answer":"skal"},
+  {"formula":2,"question":"Jeg ___ tage bilen","options":["må","tager","at tage"],"answer":"må"},
+  {"formula":2,"question":"Han ___ hjælpe dig","options":["vil","hjælper","at hjælpe"],"answer":"vil"},
+  {"formula":2,"question":"De ___ komme senere","options":["kan","kommer","at komme"],"answer":"kan"},
+
+
+  {"formula":3,"question":"Jeg ved, at han ___ kommer","options":["ikke","aldrig","ingen"],"answer":"ikke"},
+  {"formula":3,"question":"Hun siger, at hun ___ forstår det","options":["ikke","ingen","intet"],"answer":"ikke"},
+  {"formula":3,"question":"Vi tror, at de ___ kan hjælpe","options":["ikke","ingen","intet"],"answer":"ikke"},
+  {"formula":3,"question":"Han spørger, hvorfor jeg ___ svarer","options":["ikke","aldrig","ingen"],"answer":"ikke"},
+  {"formula":3,"question":"Jeg ved, fordi han ___ arbejder","options":["ikke","ingen","intet"],"answer":"ikke"},
+  {"formula":3,"question":"Hun håber, at vi ___ glemmer det","options":["ikke","ingen","intet"],"answer":"ikke"},
+  {"formula":3,"question":"De siger, at han ___ vil betale","options":["ikke","ingen","intet"],"answer":"ikke"},
+  {"formula":3,"question":"Jeg forstår, hvorfor hun ___ taler","options":["ikke","ingen","intet"],"answer":"ikke"},
+  {"formula":3,"question":"Han ved, at jeg ___ har tid","options":["ikke","ingen","intet"],"answer":"ikke"},
+  {"formula":3,"question":"Vi tror, fordi han ___ svarer","options":["ikke","ingen","intet"],"answer":"ikke"},
+
+
+  {"formula":4,"question":"Jeg bliver hjemme, ___ jeg er syg","options":["fordi","men","at"],"answer":"fordi"},
+  {"formula":4,"question":"Hun vil komme, ___ hun har travlt","options":["men","fordi","at"],"answer":"men"},
+  {"formula":4,"question":"Vi tager bilen, ___ det regner","options":["fordi","men","at"],"answer":"fordi"},
+  {"formula":4,"question":"Han er træt, ___ han arbejder meget","options":["for","men","at"],"answer":"for"},
+  {"formula":4,"question":"Jeg vil hjælpe, ___ jeg har ikke tid","options":["men","fordi","at"],"answer":"men"},
+  {"formula":4,"question":"Hun smiler, ___ hun er glad","options":["fordi","men","at"],"answer":"fordi"},
+  {"formula":4,"question":"Vi prøver igen, ___ det er svært","options":["men","fordi","at"],"answer":"men"},
+  {"formula":4,"question":"Han går tidligt, ___ han skal arbejde","options":["fordi","men","at"],"answer":"fordi"},
+  {"formula":4,"question":"Jeg ringer, ___ jeg vil forklare","options":["for","men","at"],"answer":"for"},
+  {"formula":4,"question":"Hun bliver, ___ hun vil ikke gå","options":["men","fordi","at"],"answer":"men"},
+
+
+  {"formula":5,"question":"Jeg går ud ___ købe mad","options":["for at","til at","fordi"],"answer":"for at"},
+  {"formula":5,"question":"Hun kom tidligt ___ hjælpe","options":["for at","men","fordi"],"answer":"for at"},
+  {"formula":5,"question":"Vi studerer ___ bestå eksamen","options":["for at","men","fordi"],"answer":"for at"},
+  {"formula":5,"question":"Han rejser ___ arbejde","options":["for at","men","fordi"],"answer":"for at"},
+  {"formula":5,"question":"De mødes ___ tale","options":["for at","men","fordi"],"answer":"for at"},
+  {"formula":5,"question":"Jeg åbner vinduet ___ få luft","options":["for at","men","fordi"],"answer":"for at"},
+  {"formula":5,"question":"Hun sparer penge ___ købe bil","options":["for at","men","fordi"],"answer":"for at"},
+  {"formula":5,"question":"Vi træner ___ blive bedre","options":["for at","men","fordi"],"answer":"for at"},
+  {"formula":5,"question":"Han læser ___ forstå teksten","options":["for at","men","fordi"],"answer":"for at"},
+  {"formula":5,"question":"Jeg ringer ___ spørge","options":["for at","men","fordi"],"answer":"for at"},
+
+
+  {"formula":6,"question":"Jeg er glad for, at du ___","options":["kommer","kom","komme"],"answer":"kommer"},
+  {"formula":6,"question":"Hun siger, at han ___","options":["arbejder","arbejde","arbejdede"],"answer":"arbejder"},
+  {"formula":6,"question":"Vi ved, at de ___","options":["rejser","rejse","rejste"],"answer":"rejser"},
+  {"formula":6,"question":"Han tror, at jeg ___","options":["forstår","forstå","forstod"],"answer":"forstår"},
+  {"formula":6,"question":"Jeg håber, at hun ___","options":["kommer","kom","komme"],"answer":"kommer"},
+  {"formula":6,"question":"Hun ved, at vi ___","options":["kan","kunne","at kunne"],"answer":"kan"},
+  {"formula":6,"question":"De siger, at han ___","options":["vil","ville","at ville"],"answer":"vil"},
+  {"formula":6,"question":"Jeg forstår, hvorfor hun ___","options":["græder","græde","græd"],"answer":"græder"},
+  {"formula":6,"question":"Han ved, fordi jeg ___","options":["arbejder","arbejde","arbejdede"],"answer":"arbejder"},
+  {"formula":6,"question":"Vi er sikre på, at hun ___","options":["kommer","kom","komme"],"answer":"kommer"},
+
+
+  {"formula":99,"question":"Jeg ved, at han ikke ___ komme, fordi han er syg","options":["kan","kommer","kom"],"answer":"kan"},
+  {"formula":99,"question":"Hun siger, at hun ikke ___ arbejde, men hun vil prøve","options":["kan","arbejder","kom"],"answer":"kan"},
+  {"formula":99,"question":"Hvis han ___ træt, bliver han hjemme","options":["er","bliver","har"],"answer":"er"},
+  {"formula":99,"question":"Jeg forstår ikke, hvorfor hun ikke ___ hjælpe","options":["vil","hjælper","hjælpe"],"answer":"vil"},
+  {"formula":99,"question":"Han arbejder hårdt for at ___ bestå eksamen","options":["kunne","kan","kunne at"],"answer":"kunne"},
+  {"formula":99,"question":"Vi ved, at han ikke ___ kommer, fordi han skal arbejde","options":["altid","ofte","aldrig"],"answer":"aldrig"},
+  {"formula":99,"question":"Hun bliver glad, fordi hun ___ bestå prøven","options":["kan","kunne","at kunne"],"answer":"kan"},
+  {"formula":99,"question":"Jeg håber, at du ikke ___ glemmer det","options":["vil","glemmer","glemme"],"answer":"vil"},
+  {"formula":99,"question":"Han siger, at han ikke ___ hjemme, men han bliver senere","options":["er","bliver","har"],"answer":"er"},
+  {"formula":99,"question":"Vi arbejder for at ___ bedre, fordi det er vigtigt","options":["blive","bliver","blev"],"answer":"blive"},
+
+  {"formula":99,"question":"Jeg ved, at hun ikke ___ kan komme, fordi hun er syg","options":["altid","ofte","længere"],"answer":"længere"},
+  {"formula":99,"question":"Hvis de ___ klar, kan vi begynde","options":["er","bliver","har"],"answer":"er"},
+  {"formula":99,"question":"Han siger, at han ikke ___ forstå spørgsmålet","options":["kan","forstår","forstå"],"answer":"kan"},
+  {"formula":99,"question":"Hun arbejder for at ___ mere sikker","options":["blive","bliver","blev"],"answer":"blive"},
+  {"formula":99,"question":"Jeg tror, at han ikke ___ vil hjælpe","options":["længere","altid","ofte"],"answer":"længere"},
+  {"formula":99,"question":"De bliver glade, fordi de ___ kan rejse","options":["endelig","ofte","aldrig"],"answer":"endelig"},
+  {"formula":99,"question":"Han ved, at hun ikke ___ er klar","options":["helt","ofte","altid"],"answer":"helt"},
+  {"formula":99,"question":"Vi prøver for at ___ forstå det, fordi det er svært","options":["kunne","kan","kunne at"],"answer":"kunne"},
+  {"formula":99,"question":"Jeg siger, at jeg ikke ___ vil give op","options":["længere","ofte","altid"],"answer":"længere"},
+  {"formula":99,"question":"Hvis hun ___ syg, bliver hun hjemme, men hun vil arbejde senere","options":["er","bliver","har"],"answer":"er"}
+
+]
