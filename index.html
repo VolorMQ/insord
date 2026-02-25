@@ -12,21 +12,18 @@ body {
   justify-content: center;
   padding: 20px;
 }
-
 .wrapper {
   display: flex;
   gap: 20px;
   max-width: 1200px;
   width: 100%;
 }
-
 .trainer {
   background: #222;
   padding: 20px;
   border-radius: 12px;
   flex: 2;
 }
-
 .rulesBox {
   background: #333;
   padding: 15px;
@@ -35,7 +32,6 @@ body {
   font-size: 14px;
   line-height: 1.6;
 }
-
 .option {
   background: #444;
   margin: 6px 0;
@@ -44,12 +40,9 @@ body {
   cursor: pointer;
   transition: 0.2s;
 }
-
 .option:hover { background: #555; }
-
 .correct { background: #2e7d32 !important; }
 .wrong { background: #c62828 !important; }
-
 button {
   background: #ff5555;
   border: none;
@@ -60,15 +53,16 @@ button {
   color: #fff;
   font-weight: bold;
 }
-
-#liveStats {
-  margin-top: 15px;
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-#loader {
-  text-align: center;
+#liveStats { margin-top: 15px; font-size: 14px; opacity: 0.9; }
+#loader { text-align: center; max-width: 800px; }
+.formula {
+  background: #444;
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: left;
+  font-size: 13px;
+  white-space: pre-wrap;
 }
 </style>
 </head>
@@ -83,31 +77,27 @@ button {
   <input type="file" id="jsonFile" accept=".json"><br>
   <button id="startBtn">Начать вручную</button>
   <br><br>
-  <!-- Кнопка экзамена всегда доступна -->
   <button id="startExamBtn">Начать экзамен</button>
+  <hr>
+  <h3>Все формулы:</h3>
+  <!-- Здесь гарантированно находится контейнер -->
+  <div id="allFormulas"></div>
 </div>
 
 <div class="wrapper" id="game" style="display:none;">
-
-	<div class="trainer">
-	  <div id="question"></div>
-	  <div id="options"></div>
-	  <div id="progress"></div>
-	  <div id="liveStats"></div>
-	  <button id="examBtnInGame">Экзамен</button> <!-- Кнопка прямо в процессе -->
-	</div>
+  <div class="trainer">
+    <div id="question"></div>
+    <div id="options"></div>
+    <div id="progress"></div>
+    <div id="liveStats"></div>
+    <button id="examBtnInGame">Экзамен</button>
+  </div>
 
   <div class="rulesBox">
     <h3>Правило</h3>
     <div id="ruleText"></div>
   </div>
-
 </div>
-
-<div id="allFormulas" style="margin-top:20px;">
-  <h3>Все формулы:</h3>
-</div>
-
 <script>
 let levels = [];       // обычные задания (формулы 1–6)
 let examLevels = [];   // экзамен (формула 99)
@@ -127,7 +117,7 @@ er / bliver = состояние и изменение состояния
 
 После "er" или "bliver" обычно стоит прилагательное или существительное, которое даёт смысл предложению.
 
-Ключевые слова: er, bliver, sjovt, spændende, hyggeligt
+Ключевые слова: er, bliver, sjov, spændende, hyggelig
 `,
 
   2: `
@@ -136,9 +126,8 @@ vil / kan / skal / må = модальные глаголы
 
 vil, kan, skal, må показывают отношение к действию: желание, способность, обязанность, разрешение или необходимость.
 После модального глагола идёт основной глагол в инфинитиве (без "at").
-Модальный глагол — спрягаемый, основной — инфинитив и выражает само действие.
 
-Ключевые слова: vil, kan, skal, må, trænede, spillede, dyrker
+Ключевые слова: vil, kan, skal, må
 `,
 
   3: `
@@ -169,7 +158,7 @@ til / for + at + глагол = цель действия
 "Аt" здесь передаёт инфинитив (то, что хотят сделать).
 Важно различать, когда "til/for" требуют существительного, а когда инфинитивной конструкции.
 
-Ключевые слова: til, for, at, spille, træne
+Ключевые слова: til at, for at, spille, træne, dyrke
 `,
 
   6: `
@@ -179,7 +168,7 @@ til / for + at + глагол = цель действия
 В придаточных предложениях спрягаемый глагол стоит после подлежащего и всех элементов; часто глагол оказывается ближе к концу.
 Это главный признак придаточного: порядок слов отличается от главного предложения.
 
-Ключевые слова: trænede, spillede, dyrker, er, bliver, har, kan, skal, vil, ikke
+Ключевые слова: træne, spille, dyrke, er, bliver, har, kan, skal, vil, ikke
 `,
 
   7: `
@@ -244,7 +233,8 @@ window.addEventListener("load", () => {
 const files = [
   "1.json",
   "2.json",
-  "3.json"
+  "3.json",
+  "4.json"
 ];
 
 // ===== Перемешивание =====
@@ -354,11 +344,20 @@ function initGame(data, isExam = false) {
   current = 0;
   stats = { correct: 0, wrong: 0, byFormula: {} };
 
+  // Скрываем стартовый экран
   document.getElementById("loader").style.display = "none";
   document.getElementById("game").style.display = "flex";
 
+  // Скрываем все формулы после начала игры
+  setTimeout(() => {
+    const allFormulas = document.getElementById("allFormulas");
+    if (allFormulas) allFormulas.style.display = "none";
+  }, 50); // небольшой таймаут гарантирует, что элемент уже добавлен в DOM
+
+  // Показываем первый вопрос
   showQuestion(isExam);
 }
+
 
 // ===== Показ вопроса =====
 function showQuestion(isExam = false) {
