@@ -386,31 +386,20 @@ function tokenize(text){
 function generateWords() {
   const requestedNum = parseInt(document.getElementById('numWords').value, 10) || 0;
 
-  // Берём исходный текст (с оригинальными /p и /br)
-  let cleanText = currentText.text || '';
+  // Берём исходный текст без удаления тегов
+  let rawText = currentText.text || '';
 
-  // Убираем маркеры и возможные HTML-теги
-  cleanText = cleanText
-    .replace(/\/br/g, ' ')
-    .replace(/\/p/g, ' ')
-    .replace(/<[^>]*>/g, ' ');
+  // Извлекаем слова Unicode-aware (только текст)
+  let allWords = extractWords(rawText).map(w => w.toLowerCase());
 
-  // Извлекаем слова (Unicode-aware) и переводим в нижний регистр
-  let allWords = extractWords(cleanText) || [];
-  allWords = allWords.map(w => w.toLowerCase());
-
-  // Убираем дубликаты и пустые
+  // Убираем дубликаты
   const uniqueWords = [...new Set(allWords.filter(Boolean))];
 
-  // Выбираем нужное количество — не больше, чем есть уникальных слов
   const numToSelect = Math.min(requestedNum, uniqueWords.length);
 
   selectedWords = shuffleArray(uniqueWords).slice(0, numToSelect);
-
-  // Копия доступных слов для интерфейса
   availableWords = selectedWords.slice();
 
-  // Рендерим story и список слов
   renderStory();
   renderWords();
   document.getElementById('result').textContent = '';
@@ -427,13 +416,11 @@ function escapeRegExp(str) {
 function insertPlaceholdersIntoDOM(words) {
   const container = document.getElementById('story');
 
-  // Создаём walker для текстовых узлов, исключая пустые и узлы внутри уже существующих placeholder/insertedWord
   function collectTextNodes() {
     const nodes = [];
     const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
       acceptNode(node) {
         if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-        // если текст внутри placeholder или insertedWord — пропускаем
         let p = node.parentNode;
         while (p && p !== container) {
           if (p.classList && (p.classList.contains('placeholder') || p.classList.contains('insertedWord'))) {
@@ -444,7 +431,6 @@ function insertPlaceholdersIntoDOM(words) {
         return NodeFilter.FILTER_ACCEPT;
       }
     }, false);
-
     let n;
     while (n = walker.nextNode()) nodes.push(n);
     return nodes;
@@ -453,70 +439,58 @@ function insertPlaceholdersIntoDOM(words) {
   let textNodes = collectTextNodes();
 
   words.forEach(word => {
-    // шаблон: (^|[^LETTERORMARK]) (word) (?!LETTERORMARK)
-    // Используем 'iu' флаги: i — регистронезависимый, u — unicode
-    const escaped = escapeRegExp(word);
-    const pattern = new RegExp(`(^|[^\\p{L}\\p{M}])(${escaped})(?![\\p{L}\\p{M}])`, 'iu');
-
     let placed = false;
+    const lowerWord = word.toLowerCase();
 
     for (let i = 0; i < textNodes.length; i++) {
       const tn = textNodes[i];
       const txt = tn.nodeValue;
-      const m = pattern.exec(txt);
-      if (!m) continue;
 
-      // m.index — индекс начала полного совпадения (включая захваченный префикс m[1])
-      const prefix = m[1] || '';
-      const wordStart = m.index + prefix.length;
-      const wordLength = m[2].length;
-      const beforeText = txt.slice(0, wordStart);
-      const afterText = txt.slice(wordStart + wordLength);
+      // ищем слово как отдельное, независимо от регистра
+      const regex = new RegExp(`\\b${escapeRegExp(lowerWord)}\\b`, 'iu');
+      const match = regex.exec(txt);
+      if (!match) continue;
 
-      // создаём узлы
+      const index = match.index;
+      const beforeText = txt.slice(0, index);
+      const afterText = txt.slice(index + match[0].length);
+
       const beforeNode = document.createTextNode(beforeText);
       const afterNode = document.createTextNode(afterText);
 
       const placeholder = document.createElement('span');
       placeholder.className = 'placeholder';
       placeholder.textContent = '___';
-      placeholder.dataset.expected = word.toLowerCase();
-      // назначаем обработчики (используем глобальные функции)
+      placeholder.dataset.expected = lowerWord; // гарантировано lower-case
       placeholder.ondrop = dropWord;
       placeholder.ondragover = allowDrop;
       placeholder.onclick = tapPlaceholder;
 
-      // заменяем текущий текстовый узел тремя новыми узлами
       const parent = tn.parentNode;
       parent.insertBefore(beforeNode, tn);
       parent.insertBefore(placeholder, tn);
       parent.insertBefore(afterNode, tn);
       parent.removeChild(tn);
 
-      // обновляем список текстовых узлов (пересобираем)
       textNodes = collectTextNodes();
-
       placed = true;
       break;
     }
 
     if (!placed) {
-      // если слово не найдено в доступных текстовых узлах — добавим placeholder в конец контейнера
       const placeholder = document.createElement('span');
       placeholder.className = 'placeholder';
       placeholder.textContent = '___';
-      placeholder.dataset.expected = word.toLowerCase();
+      placeholder.dataset.expected = lowerWord;
       placeholder.ondrop = dropWord;
       placeholder.ondragover = allowDrop;
       placeholder.onclick = tapPlaceholder;
-
       container.appendChild(placeholder);
-
-      // пересобираем текстовые узлы на случай дальнейших вставок
       textNodes = collectTextNodes();
     }
   });
 }
+
 
 // Обновлённая renderStory: сначала формируем HTML (абзацы/переносы),
 // затем вызываем insertPlaceholdersIntoDOM чтобы аккуратно вставить placeholder'ы.
@@ -751,9 +725,26 @@ document.getElementById('check').addEventListener('click', () => {
   const inserted = Array.from(document.querySelectorAll('.insertedWord'));
   let allCorrect = true;
 
+  // Надёжная очистка слова: сначала пробуем Unicode property (если поддерживается),
+  // при ошибке — fallback на латинский + расширенные буквы (dansk/ё/à-ÿ и т.п.)
+  function cleanWordForCompare(word) {
+    if (!word) return '';
+    const s = String(word).trim().toLowerCase();
+    try {
+      // может бросить SyntaxError в средах без поддержки \p
+      const m = s.match(/[\p{L}\p{M}]+/gu);
+      return m && m.length ? m[0].toLowerCase() : '';
+    } catch (e) {
+      // fallback: набор латинских и большинства европейских букв + æøå etc.
+      const m = s.match(/[A-Za-zÀ-ÖØ-öø-ÿÆæÅåŒœ]+/);
+      return m ? m[0].toLowerCase() : '';
+    }
+  }
+
   inserted.forEach(el => {
-    const actual = el.textContent.trim().toLowerCase();
-    const expected = el.dataset && el.dataset.expected ? el.dataset.expected.toLowerCase() : null;
+    const actual = cleanWordForCompare(el.textContent);
+    const expectedRaw = el.dataset && el.dataset.expected ? el.dataset.expected : '';
+    const expected = cleanWordForCompare(expectedRaw);
 
     if (expected && actual === expected) {
       el.style.background = '#d4edda';
@@ -767,6 +758,8 @@ document.getElementById('check').addEventListener('click', () => {
 
   document.getElementById('result').textContent = allCorrect ? 'Alle svar er korrekte! 🎉' : 'Nogle svar er forkerte. Prøv igen.';
 });
+
+
 
 // Кнопки
 document.getElementById('refresh').addEventListener('click', loadRandomText);
