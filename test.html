@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<title>Fill-in-the-blank interactive</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  background: linear-gradient(-45deg, #0b0f1a, #0f172a, #111827, #0b0f1a);
+  background-size: 400% 400%;
+  animation: gradientFlow 25s ease infinite;
+  color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+h2 {
+  text-align: center;
+  color: #ffffff;
+  margin-bottom: 15px;
+}
+
+#controls {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* ===== TEXT FOCUS ===== */
+#story {
+  flex: 1;
+  overflow-y: auto;
+  background: #ffffff;
+  color: #111827;
+  padding: 25px;
+  border-radius: 16px;
+  font-size: 20px;
+  line-height: 1.8;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+  margin-bottom: 20px;
+}
+
+.placeholder, .insertedWord {
+  display: inline-block;
+  min-width: 70px;
+  padding: 6px;
+  margin: 0 4px;
+  border-bottom: 2px solid #2563eb;
+  text-align: center;
+}
+
+.placeholder {
+  background: #f3f4f6;
+  cursor: grab;
+  color: #111827;
+}
+
+.insertedWord {
+  background: #2563eb;
+  color: #ffffff;
+  border-radius: 6px;
+}
+
+/* ===== WORD BANK ===== */
+#choices {
+  position: sticky;
+  bottom: 0;
+  background: #0f172a;
+  padding: 15px 10px 20px 10px;
+  border-top: 2px solid rgba(255,255,255,0.1);
+  text-align: center;
+  z-index: 10;
+}
+
+.word {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 5px;
+  background: #1f2937;
+  color: #ffffff;
+  border-radius: 8px;
+  user-select: none;
+}
+
+#check, #refresh, #generateWords, #openRules {
+  margin-top: 10px;
+  padding: 8px 16px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: none;
+  background: #1f2937;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+#result {
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 18px;
+  text-align: center;
+}
+
+/* ===== RULES PANEL ===== */
+
+#rulesOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 100;
+}
+
+#rulesPanel {
+  position: fixed;
+  top: 0;
+  right: -420px;
+  width: 400px;
+  max-width: 90%;
+  height: 100%;
+  background: #ffffff;
+  color: #111827;
+  box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+  transition: right 0.4s ease;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+}
+
+#rulesPanel.active {
+  right: 0;
+}
+
+#rulesOverlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#rulesContent {
+  padding: 25px;
+  overflow-y: auto;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+#rulesPanel h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#rulesPanel hr {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+/* 📱 Mobile */
+@media (max-width: 768px) {
+  body { padding: 10px; }
+  #story { font-size: 18px; padding: 18px; margin-bottom: 120px; }
+  #choices { position: fixed; left: 0; right: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<h2>Udfyld de manglende ord:</h2>
+
+<div id="controls">
+  <label>Antal ord til at indsætte:
+    <input type="number" id="numWords" min="1" max="10" value="3">
+  </label>
+  <label>
+    <input type="checkbox" id="mobileMode"> Mobiltilstand
+  </label>
+  <button id="generateWords">Generer ord</button>
+  <button id="refresh">Opdater tekst</button>
+  <button id="check">Check</button>
+  <button id="openRules">Regler</button>
+</div>
+
+<div id="story"></div>
+<div id="choices"></div>
+<div id="result"></div>
+
+<!-- Overlay -->
+<div id="rulesOverlay"></div>
+
+<!-- Slide panel -->
+<div id="rulesPanel">
+	<div id="rulesContent">
+	  <h2>Сложные предложения (для выпускного экзамена)</h2>
+
+	  <!-- 1. Главное + Главное -->
+	  <h3>1. Главное + Главное (Hovedsætning → Konjunktion → Hovedsætning)</h3>
+	  <p><strong>Признаки:</strong></p>
+	  <ul>
+		<li>Союз: og (и), men (но), eller (или)</li>
+		<li>Обе части равноправные</li>
+		<li>Глагол в каждой части на второй позиции (V2)</li>
+	  </ul>
+	  <p><strong>Пример:</strong><br>
+	  Jeg læser bogen, og min ven skriver en opgave.<br>
+	  (Я читаю книгу, а мой друг пишет задание.)
+	  </p>
+
+	  <hr>
+
+	  <!-- 2. Главное + Придаточное -->
+	  <h3>2. Главное + Придаточное (Hovedsætning → Konjunktion → Lædsætning)</h3>
+	  <p><strong>Признаки:</strong></p>
+	  <ul>
+		<li>Союз: fordi (потому что), hvis (если), at (что), når (когда)</li>
+		<li>Придаточная зависит от главной</li>
+		<li>Глагол в главной части — второй элемент, в придаточной — в конце</li>
+	  </ul>
+	  <p><strong>Пример:</strong><br>
+	  Jeg læser bogen, fordi min ven skriver en opgave.<br>
+	  (Я читаю книгу, потому что мой друг пишет задание.)
+	  </p>
+
+	  <hr>
+
+	  <!-- 3. Инверсия в придаточном -->
+	  <h3>3. Инверсия в придаточном (Bisætning med inversion)</h3>
+	  <p><strong>Структура:</strong> Konjunktion → Adverbium/Objekt → Substantiv → Verbum</p>
+	  <p><strong>Пример:</strong><br>
+	  Hvis i morgen regner det, bliver skolen lukket.<br>
+	  (Если завтра будет дождь, школа будет закрыта.)
+	  </p>
+
+	  <hr>
+
+	  <!-- 4. Вопросы с придаточными -->
+	  <h3>4. Вопросы с инверсией и придаточным (Spørgsmål med bisætning)</h3>
+	  <p><strong>Структура:</strong> Spørgeord → Verbum → Substantiv → Objekt → (Bisætning)</p>
+	  <ul>
+		<li>Вопросительное слово — первое</li>
+		<li>Глагол — второй элемент в главной части</li>
+		<li>Придаточное: глагол в конце</li>
+	  </ul>
+	  <p><strong>Пример:</strong><br>
+	  Hvornår ved du, at mødet starter?<br>
+	  (Когда ты узнаешь, что встреча начинается?)
+	  </p>
+
+	  <hr>
+
+	  <!-- 5. Модальные и вспомогательные -->
+	  <h3>5. Модальные и вспомогательные глаголы</h3>
+	  <p><strong>Структура:</strong> Substantiv → Modalverbum → Hjælpeverbum → Infinitiv/Participium → Objekt → (Bisætning)</p>
+	  <p>
+	  Глаголы: модальный + вспомогательный → основной инфинитив/причастие → объект → придаточное в конце.
+	  Даже если слова неизвестны, соблюдай порядок глаголов.
+	  </p>
+	  <p><strong>Пример:</strong><br>
+	  Jeg vil have læst bogen, inden jeg skriver rapporten.<br>
+	  (Я хочу прочитать книгу, прежде чем писать отчёт.)
+	  </p>
+
+	  <hr>
+
+	  <!-- 6. Обстоятельства времени, места, способа -->
+	  <h3>6. Обстоятельства времени, места и способа</h3>
+	  <p><strong>Структура:</strong> Tid/Adverbium → Substantiv → Verbum → Objekt → Sted → Adverbium → (Bisætning)</p>
+	  <p>
+	  Вставляй placeholders на позиции подлежащего и объекта, глагол — второй в главной части, придаточное в конце.
+	  </p>
+	  <p><strong>Пример:</strong><br>
+	  I morges løb jeg hurtigt til skolen i regnen, fordi jeg var sent ude.<br>
+	  (Сегодня утром я быстро побежал в школу под дождём, потому что опаздывал.)
+	  </p>
+
+	  <hr>
+
+	  <!-- 7. Совет для экзамена -->
+	  <h3>7. Шпаргалка для экзамена</h3>
+	  <ul>
+		<li>Подлежащее (Substantiv) — placeholder</li>
+		<li>Глагол (Verbum) — строго на второй позиции в главной части, в конце в придаточной</li>
+		<li>Объект, место, обстоятельства — вставлять наугад, соблюдая общую структуру</li>
+		<li>Придаточные — глагол всегда в конце</li>
+	  </ul>
+	  <p>Даже если незнакомы слова, соблюдая эти позиции, можно правильно выполнить задание по структуре предложения.</p>
+	</div>
+
+</div>
+
+<script>
+/* ==== RULES PANEL LOGIC ==== */
+const openRulesBtn = document.getElementById('openRules');
+const rulesPanel = document.getElementById('rulesPanel');
+const rulesOverlay = document.getElementById('rulesOverlay');
+
+openRulesBtn.addEventListener('click', () => {
+  rulesPanel.classList.add('active');
+  rulesOverlay.classList.add('active');
+});
+
+rulesOverlay.addEventListener('click', () => {
+  rulesPanel.classList.remove('active');
+  rulesOverlay.classList.remove('active');
+});
+</script>
+
+<script>
+let texts = [];
+let currentText = null;
+let availableWords = [];
+let selectedWords = [];
+let dragged = null;
+let fromChoice = false;
+let mobileMode = false;
+let selectedWordForTap = null;
+
+// Загрузка JSON с рассказами
+fetch('texts.json')
+  .then(res => res.json())
+  .then(data => {
+    texts = data;
+    loadRandomText();
+  })
+  .catch(()=> {
+    // если нет файла, можно задать fallback текст
+    texts = [{ text: "Magnus fra Sorø har søgt et job som kok på en fin restaurant i København, og nu er han glad og spændt, for han er blevet bedt om at komme til jobsamtale.<br> Magnus har planlagt at tage bilen til København, da han sætter sig ind i sin huskede bil for at tage afsted, men den vil ikke starte. Derfor cykler han hurtigt hen til stationen for at tage toget. Da han kommer derhen, er der ikke ret lang tid til, at toget til København kører, så Magnus skynder sig hen til automaten for at købe en billet. Men da han skal betale, opdager han et nyt problem: han har hverken sin pung eller sin telefon med. Magnus ved ikke, hvad han skal gøre, for han vil ikke tage toget uden billet.<br> Bagved Magnus står der en ung kvinde, som kan tydeligt se, at han ikke kan betale. Og selvom de ikke kender hinanden, tilbyder hun at købe en billet til ham. Magnus takker den fremmede kvinde mange gange. Han får hendes telefonnummer, så han kan betale hende pengene tilbage senere, og han når toget i sidste øjeblik. Da han sidder i toget, er han lettet, men også lidt nervøs, han tænker på, hvordan samtalen vil gå. Den går heldigvis godt, så da Magnus tager hjem, er han ret tilfreds.<br> Derhjemme betaler han straks den hjælpsomme kvinde med MobilePay. Men han sender hende ikke kun pengene, men også en sms, hvor han spørger, om hun vil med ud og drikke en kop kaffe i weekenden. Det vil hun gerne. Og om lørdagen mødes de på en café i Sorø, og denne gang har Magnus ikke sin pung, så det er selvfølgelig ham, der betaler for kaffen.<br>" }];
+    loadRandomText();
+  });
+
+// Случайный выбор текста
+function loadRandomText() {
+  const randomIndex = Math.floor(Math.random() * texts.length);
+  currentText = JSON.parse(JSON.stringify(texts[randomIndex])); // глубокая копия
+  generateWords();
+}
+
+// Перемешивание массива
+function shuffleArray(arr) {
+  return arr.slice().sort(() => Math.random() - 0.5);
+}
+
+// ---- helper: получить все слова (Unicode-aware) ----
+function extractWords(text){
+  try {
+    // работает в современных браузерах: берём буквы и комбинации диакритики
+    return text.match(/[\p{L}\p{M}]+/gu) || [];
+  } catch(e){
+    // fallback — старые браузеры: добавим æøå вручную
+    return text.match(/\b[\wæøåÆØÅ]+\b/g) || [];
+  }
+}
+
+// ---- helper: токенизация текста (слова и всё остальное) ----
+function tokenize(text){
+  try {
+    return text.match(/[\p{L}\p{M}]+|[^\p{L}\p{M}]+/gu) || [text];
+  } catch(e){
+    // fallback: разбиваем на слова/не-слова (сохраняя разделители)
+    return text.split(/(\W+)/);
+  }
+}
+
+// ---- Генерация случайных слов для вставки (замена старой функции) ----
+function generateWords() {
+  const requestedNum = parseInt(document.getElementById('numWords').value, 10) || 0;
+
+  // Берём исходный текст (с оригинальными /p и /br)
+  let cleanText = currentText.text || '';
+
+  // Убираем маркеры и возможные HTML-теги
+  cleanText = cleanText
+    .replace(/\/br/g, ' ')
+    .replace(/\/p/g, ' ')
+    .replace(/<[^>]*>/g, ' ');
+
+  // Извлекаем слова (Unicode-aware) и переводим в нижний регистр
+  let allWords = extractWords(cleanText) || [];
+  allWords = allWords.map(w => w.toLowerCase());
+
+  // Убираем дубликаты и пустые
+  const uniqueWords = [...new Set(allWords.filter(Boolean))];
+
+  // Выбираем нужное количество — не больше, чем есть уникальных слов
+  const numToSelect = Math.min(requestedNum, uniqueWords.length);
+
+  selectedWords = shuffleArray(uniqueWords).slice(0, numToSelect);
+
+  // Копия доступных слов для интерфейса
+  availableWords = selectedWords.slice();
+
+  // Рендерим story и список слов
+  renderStory();
+  renderWords();
+  document.getElementById('result').textContent = '';
+}
+
+// ---- Создание текста с placeholders, заменяем только ОДНО (первое) вхождение каждого слова ----
+// helper: экранирует строку для использования в RegExp
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Вставляет placeholder'ы в DOM (#story) по одному для каждого слова в массиве words.
+// Работает через обход текстовых узлов, чтобы не ломать HTML.
+function insertPlaceholdersIntoDOM(words) {
+  const container = document.getElementById('story');
+
+  // Создаём walker для текстовых узлов, исключая пустые и узлы внутри уже существующих placeholder/insertedWord
+  function collectTextNodes() {
+    const nodes = [];
+    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        // если текст внутри placeholder или insertedWord — пропускаем
+        let p = node.parentNode;
+        while (p && p !== container) {
+          if (p.classList && (p.classList.contains('placeholder') || p.classList.contains('insertedWord'))) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          p = p.parentNode;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    }, false);
+
+    let n;
+    while (n = walker.nextNode()) nodes.push(n);
+    return nodes;
+  }
+
+  let textNodes = collectTextNodes();
+
+  words.forEach(word => {
+    // шаблон: (^|[^LETTERORMARK]) (word) (?!LETTERORMARK)
+    // Используем 'iu' флаги: i — регистронезависимый, u — unicode
+    const escaped = escapeRegExp(word);
+    const pattern = new RegExp(`(^|[^\\p{L}\\p{M}])(${escaped})(?![\\p{L}\\p{M}])`, 'iu');
+
+    let placed = false;
+
+    for (let i = 0; i < textNodes.length; i++) {
+      const tn = textNodes[i];
+      const txt = tn.nodeValue;
+      const m = pattern.exec(txt);
+      if (!m) continue;
+
+      // m.index — индекс начала полного совпадения (включая захваченный префикс m[1])
+      const prefix = m[1] || '';
+      const wordStart = m.index + prefix.length;
+      const wordLength = m[2].length;
+      const beforeText = txt.slice(0, wordStart);
+      const afterText = txt.slice(wordStart + wordLength);
+
+      // создаём узлы
+      const beforeNode = document.createTextNode(beforeText);
+      const afterNode = document.createTextNode(afterText);
+
+      const placeholder = document.createElement('span');
+      placeholder.className = 'placeholder';
+      placeholder.textContent = '___';
+      placeholder.dataset.expected = word.toLowerCase();
+      // назначаем обработчики (используем глобальные функции)
+      placeholder.ondrop = dropWord;
+      placeholder.ondragover = allowDrop;
+      placeholder.onclick = tapPlaceholder;
+
+      // заменяем текущий текстовый узел тремя новыми узлами
+      const parent = tn.parentNode;
+      parent.insertBefore(beforeNode, tn);
+      parent.insertBefore(placeholder, tn);
+      parent.insertBefore(afterNode, tn);
+      parent.removeChild(tn);
+
+      // обновляем список текстовых узлов (пересобираем)
+      textNodes = collectTextNodes();
+
+      placed = true;
+      break;
+    }
+
+    if (!placed) {
+      // если слово не найдено в доступных текстовых узлах — добавим placeholder в конец контейнера
+      const placeholder = document.createElement('span');
+      placeholder.className = 'placeholder';
+      placeholder.textContent = '___';
+      placeholder.dataset.expected = word.toLowerCase();
+      placeholder.ondrop = dropWord;
+      placeholder.ondragover = allowDrop;
+      placeholder.onclick = tapPlaceholder;
+
+      container.appendChild(placeholder);
+
+      // пересобираем текстовые узлы на случай дальнейших вставок
+      textNodes = collectTextNodes();
+    }
+  });
+}
+
+// Обновлённая renderStory: сначала формируем HTML (абзацы/переносы),
+// затем вызываем insertPlaceholdersIntoDOM чтобы аккуратно вставить placeholder'ы.
+function renderStory() {
+  // 1) Построить HTML из currentText.text: /p -> <p>, /br -> <br>
+  const raw = currentText.text || '';
+
+  // Разбиваем по /p, оборачиваем в <p>, внутри блока заменяем /br на <br>
+  const html = raw.split('/p').map(block => {
+    const inner = block.trim().replace(/\/br/g, '<br>');
+    return `<p>${inner}</p>`;
+  }).join('');
+
+  // Вставляем в контейнер (ещё без placeholder'ов)
+  const storyEl = document.getElementById('story');
+  storyEl.innerHTML = html;
+
+  // 2) Вставляем placeholder'ы в DOM (один placeholder на каждое слово в selectedWords)
+  // selectedWords уже в нижнем регистре (expected будет lower-case)
+  insertPlaceholdersIntoDOM(selectedWords);
+}
+
+
+// Отображение доступных слов
+function renderWords() {
+  const choicesDiv = document.getElementById('choices');
+  // при мобилке слова не draggable
+  choicesDiv.innerHTML = availableWords.map((w,i) =>
+    `<div class="word" ${mobileMode ? '' : 'draggable="true"'} id="word${i}" ondragstart="dragWord(event)" onclick="tapWord(event)">${w}</div>`
+  ).join('');
+}
+
+// Drag & Drop
+function allowDrop(ev){ ev.preventDefault(); }
+
+function dragWord(ev){
+  if(mobileMode) return; // в мобилке drag отключаем
+  dragged = ev.target;
+  fromChoice = true;
+  ev.dataTransfer.setData("text", ev.target.textContent);
+  ev.target.classList.add('dragging');
+}
+
+function dropWord(ev){
+  if (mobileMode) return; // в мобилке drop отключаем
+  ev.preventDefault();
+  const placeholder = ev.target;
+  if (!dragged) return;
+
+  const expected = placeholder.dataset && placeholder.dataset.expected ? placeholder.dataset.expected : null;
+  const wordText = dragged.textContent.trim();
+
+  // создаём вставленный span и копируем expected
+  const span = document.createElement('span');
+  span.className = 'insertedWord';
+  span.draggable = true;
+  span.textContent = wordText;
+  if (expected) span.dataset.expected = expected;
+
+  span.ondragstart = dragInsertedWord;
+  span.onclick = tapInsertedWord;
+  placeholder.parentNode.replaceChild(span, placeholder);
+
+  if (fromChoice) {
+    const index = availableWords.indexOf(dragged.textContent);
+    if (index > -1) availableWords.splice(index, 1);
+    renderWords();
+  }
+
+  if (dragged) dragged.classList.remove('dragging');
+  dragged = null;
+}
+
+
+function dragInsertedWord(ev){
+  if (mobileMode) return;
+  const wordEl = ev.target;
+  dragged = wordEl;
+  fromChoice = false;
+  ev.dataTransfer.setData("text", wordEl.textContent);
+  ev.target.classList.add('dragging');
+
+  // вернуть слово в банк
+  const wordText = wordEl.textContent.trim();
+  availableWords.push(wordText);
+  renderWords();
+
+  // создаём placeholder и переносим expected туда
+  const placeholder = document.createElement('span');
+  placeholder.className = 'placeholder';
+  placeholder.textContent = '___';
+  if (wordEl.dataset && wordEl.dataset.expected) {
+    placeholder.dataset.expected = wordEl.dataset.expected;
+  }
+  placeholder.ondrop = dropWord;
+  placeholder.ondragover = allowDrop;
+  placeholder.onclick = tapPlaceholder;
+
+  wordEl.parentNode.replaceChild(placeholder, wordEl);
+  dragged = null;
+}
+
+// === MOBILE: tap handlers ===
+function tapWord(ev){
+  if(!mobileMode) return;
+  const el = ev.currentTarget;
+  const word = el.textContent.trim();
+  if(selectedWordForTap === word){
+    selectedWordForTap = null;
+    el.style.background = ''; // сброс подсветки
+  } else {
+    selectedWordForTap = word;
+    // подсветим выбранное
+    document.querySelectorAll('#choices .word').forEach(w => w.style.background = '#4CAF50');
+    el.style.background = '#1976D2';
+  }
+}
+
+function tapPlaceholder(ev){
+  if (!mobileMode) return;
+  if (!selectedWordForTap) return;
+  const placeholder = ev.target;
+  const expected = placeholder.dataset && placeholder.dataset.expected ? placeholder.dataset.expected : null;
+  const wordText = selectedWordForTap;
+
+  const span = document.createElement('span');
+  span.className = 'insertedWord';
+  span.textContent = wordText;
+  // mobile: не делаем draggable, но сохраняем expected
+  if (expected) span.dataset.expected = expected;
+  span.draggable = false;
+  span.onclick = tapInsertedWord;
+
+  placeholder.parentNode.replaceChild(span, placeholder);
+
+  // убрать слово из availableWords
+  const idx = availableWords.indexOf(selectedWordForTap);
+  if (idx > -1) availableWords.splice(idx, 1);
+  selectedWordForTap = null;
+  renderWords();
+}
+
+function tapInsertedWord(ev){
+  if (!mobileMode) return;
+  const wordEl = ev.target;
+  const wordText = wordEl.textContent.trim();
+  const expected = wordEl.dataset && wordEl.dataset.expected ? wordEl.dataset.expected : null;
+
+  // вернуть слово в банк
+  availableWords.push(wordText);
+  renderWords();
+
+  // восстановить placeholder с expected (если был)
+  const placeholder = document.createElement('span');
+  placeholder.className = 'placeholder';
+  placeholder.textContent = '___';
+  if (expected) placeholder.dataset.expected = expected;
+  placeholder.ondrop = dropWord;
+  placeholder.ondragover = allowDrop;
+  placeholder.onclick = tapPlaceholder;
+
+  wordEl.parentNode.replaceChild(placeholder, wordEl);
+}
+
+// Проверка (оставлена как в твоём рабочем коде — сравнение по позиции)
+document.getElementById('check').addEventListener('click', () => {
+  const inserted = Array.from(document.querySelectorAll('.insertedWord'));
+  let allCorrect = true;
+
+  inserted.forEach(el => {
+    const actual = el.textContent.trim().toLowerCase();
+    const expected = el.dataset && el.dataset.expected ? el.dataset.expected.toLowerCase() : null;
+
+    if (expected && actual === expected) {
+      el.style.background = '#d4edda';
+      el.style.borderBottom = '2px solid green';
+    } else {
+      el.style.background = '#f8d7da';
+      el.style.borderBottom = '2px solid red';
+      allCorrect = false;
+    }
+  });
+
+  document.getElementById('result').textContent = allCorrect ? 'Alle svar er korrekte! 🎉' : 'Nogle svar er forkerte. Prøv igen.';
+});
+
+// Кнопки
+document.getElementById('refresh').addEventListener('click', loadRandomText);
+document.getElementById('generateWords').addEventListener('click', generateWords);
+document.getElementById('mobileMode').addEventListener('change', (e) => {
+  mobileMode = e.target.checked;
+  selectedWordForTap = null;
+  // при переключении режима: делаем renderWords чтобы обновить draggable атрибуты и убрать подсветки
+  renderWords();
+});
+</script>
+
+</body>
+</html>

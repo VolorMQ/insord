@@ -78,9 +78,11 @@ button {
   <button id="startBtn">Начать вручную</button>
   <br><br>
   <button id="startExamBtn">Начать экзамен</button>
+  <br><br>
+  <!-- Кнопка для работы с текстом -->
+  <button id="textWorkBtn">Работать с текстом</button>
   <hr>
   <h3>Все формулы:</h3>
-  <!-- Здесь гарантированно находится контейнер -->
   <div id="allFormulas"></div>
 </div>
 
@@ -98,6 +100,7 @@ button {
     <div id="ruleText"></div>
   </div>
 </div>
+
 <script>
 let levels = [];       // обычные задания (формулы 1–6)
 let examLevels = [];   // экзамен (формула 99)
@@ -228,6 +231,11 @@ window.addEventListener("load", () => {
   showAllFormulas();
   loadJSONFromServer();
 });
+
+// ===== Кнопка для открытия test.html =====
+document.getElementById("textWorkBtn").onclick = () => {
+  window.location.href = "test.html";
+};
 
 
 const files = [
