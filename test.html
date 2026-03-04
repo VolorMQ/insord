@@ -525,53 +525,99 @@ function renderWords() {
 }
 
 
-function addWordHints() {
-  const container = document.getElementById('story');
-
-  function wrapWords(node) {
-    if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim()) {
-      const parent = node.parentNode;
-      const words = node.nodeValue.split(/(\s+)/);
-      words.forEach(w => {
-        if (!w.trim()) {
-          parent.insertBefore(document.createTextNode(w), node);
-          return;
-        }
-        const lower = w.toLowerCase();
-        const span = document.createElement('span');
-        span.textContent = w;
-        span.className = 'story-word';
-        if (dictionary[lower]) {
-          span.dataset.translation = dictionary[lower];
-          span.title = dictionary[lower]; // десктоп: tooltip
-          span.addEventListener('click', showMobileHint); // мобильный тап
-        }
-        parent.insertBefore(span, node);
-      });
-      parent.removeChild(node);
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      node.childNodes.forEach(wrapWords);
-    }
+function cleanWord(word) {
+  if (!word) return '';
+  const s = String(word).trim().toLowerCase();
+  try {
+    const m = s.match(/[\p{L}\p{M}]+/gu);
+    return m ? m.join('') : '';
+  } catch (e) {
+    // fallback для браузеров без Unicode property support
+    const m = s.match(/[A-Za-zÀ-ÖØ-öø-ÿÆæÅåŒœ]+/);
+    return m ? m[0] : '';
   }
-
-  container.childNodes.forEach(wrapWords);
 }
 
+// --- helper: разворачиваем старые .story-word ---
+function unwrapStoryWords() {
+  const story = document.getElementById('story');
+  if (!story) return;
+  const existing = Array.from(story.querySelectorAll('.story-word'));
+  existing.forEach(span => {
+    span.replaceWith(document.createTextNode(span.textContent));
+  });
+}
 
-// Функция показа подсказки при тапе
+// --- обновлённая addWordHints ---
+function addWordHints() {
+  const container = document.getElementById('story');
+  if (!container) return;
+
+  // сначала убираем старые обёртки
+  unwrapStoryWords();
+
+  // TreeWalker обходит все текстовые узлы, кроме тех что внутри placeholder/insertedWord
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+      let p = node.parentNode;
+      while (p && p !== container) {
+        if (p.classList && (p.classList.contains('placeholder') || p.classList.contains('insertedWord'))) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        p = p.parentNode;
+      }
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  }, false);
+
+  let tn;
+  const textNodes = [];
+  while (tn = walker.nextNode()) textNodes.push(tn);
+
+  textNodes.forEach(textNode => {
+    const parent = textNode.parentNode;
+    const parts = textNode.nodeValue.split(/(\s+)/); // сохраняем пробелы
+
+    const frag = document.createDocumentFragment();
+
+    parts.forEach(part => {
+      if (!part) return;
+      if (!part.trim()) {
+        frag.appendChild(document.createTextNode(part));
+        return;
+      }
+
+      const key = cleanWord(part);
+      if (key && dictionary && dictionary[key]) {
+        const span = document.createElement('span');
+        span.className = 'story-word';
+        span.textContent = part;
+        span.dataset.translation = dictionary[key];
+        span.title = dictionary[key]; // десктоп: tooltip
+        span.addEventListener('click', showMobileHint); // мобильный тап
+        frag.appendChild(span);
+      } else {
+        frag.appendChild(document.createTextNode(part));
+      }
+    });
+
+    parent.replaceChild(frag, textNode);
+  });
+}
+
+// --- обновлённая подсказка для мобильного ---
 function showMobileHint(ev) {
-  if (!mobileMode) return; // только для мобильной версии
+  if (!mobileMode) return; // только мобилка
   const wordEl = ev.currentTarget;
   const translation = wordEl.dataset.translation;
   if (!translation) return;
 
-  // Создаём подсказку
-  let hint = document.createElement('div');
+  const hint = document.createElement('div');
   hint.className = 'mobile-hint';
   hint.textContent = translation;
   document.body.appendChild(hint);
 
-  // Позиционируем подсказку рядом с словом
   const rect = wordEl.getBoundingClientRect();
   hint.style.position = 'absolute';
   hint.style.left = `${rect.left + window.scrollX}px`;
@@ -582,12 +628,8 @@ function showMobileHint(ev) {
   hint.style.borderRadius = '4px';
   hint.style.zIndex = 9999;
 
-  // Авто-удаление через 2 секунды
   setTimeout(() => hint.remove(), 2000);
 }
-
-
-
 // Drag & Drop
 function allowDrop(ev){ ev.preventDefault(); }
 
