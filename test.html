@@ -356,38 +356,6 @@ fetch('dictionary.json')
   })
   .catch(err => console.error('Не удалось загрузить словарь', err));
 
-function addWordHints() {
-  const container = document.getElementById('story');
-
-  function wrapWords(node) {
-    if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim()) {
-      const parent = node.parentNode;
-      const words = node.nodeValue.split(/(\s+)/);
-      words.forEach(w => {
-        if (!w.trim()) {
-          parent.insertBefore(document.createTextNode(w), node);
-          return;
-        }
-        const lower = w.toLowerCase();
-        const span = document.createElement('span');
-        span.textContent = w;
-        span.className = 'story-word';
-        // только если есть перевод
-        if (dictionary[lower]) {
-          span.dataset.translation = dictionary[lower];
-          span.addEventListener('click', showMobileHint);
-        }
-        parent.insertBefore(span, node);
-      });
-      parent.removeChild(node);
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      node.childNodes.forEach(wrapWords);
-    }
-  }
-
-  container.childNodes.forEach(wrapWords);
-}
-
 // Перемешивание массива
 function shuffleArray(arr) {
   return arr.slice().sort(() => Math.random() - 0.5);
@@ -569,6 +537,7 @@ function renderStory() {
   // 2) Вставляем placeholder'ы в DOM (один placeholder на каждое слово в selectedWords)
   // selectedWords уже в нижнем регистре (expected будет lower-case)
   insertPlaceholdersIntoDOM(selectedWords);
+  addWordHints();
 }
 
 
@@ -580,6 +549,39 @@ function renderWords() {
     `<div class="word" ${mobileMode ? '' : 'draggable="true"'} id="word${i}" ondragstart="dragWord(event)" onclick="tapWord(event)">${w}</div>`
   ).join('');
 }
+
+function addWordHints() {
+  const container = document.getElementById('story');
+
+  function wrapWords(node) {
+    if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim()) {
+      const parent = node.parentNode;
+      const words = node.nodeValue.split(/(\s+)/);
+      words.forEach(w => {
+        if (!w.trim()) {
+          parent.insertBefore(document.createTextNode(w), node);
+          return;
+        }
+        const lower = w.toLowerCase();
+        const span = document.createElement('span');
+        span.textContent = w;
+        span.className = 'story-word';
+        if (dictionary[lower]) {
+          span.dataset.translation = dictionary[lower];
+          span.title = dictionary[lower]; // десктоп: tooltip
+          span.addEventListener('click', showMobileHint); // мобильный тап
+        }
+        parent.insertBefore(span, node);
+      });
+      parent.removeChild(node);
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      node.childNodes.forEach(wrapWords);
+    }
+  }
+
+  container.childNodes.forEach(wrapWords);
+}
+
 
 // Функция показа подсказки при тапе
 function showMobileHint(ev) {
