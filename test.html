@@ -388,35 +388,6 @@ function addWordHints() {
   container.childNodes.forEach(wrapWords);
 }
 
-// Функция показа подсказки при тапе
-function showMobileHint(ev) {
-  if (!mobileMode) return; // только для мобильной версии
-  const wordEl = ev.currentTarget;
-  const translation = wordEl.dataset.translation;
-  if (!translation) return;
-
-  // Создаём подсказку
-  let hint = document.createElement('div');
-  hint.className = 'mobile-hint';
-  hint.textContent = translation;
-  document.body.appendChild(hint);
-
-  // Позиционируем подсказку рядом с словом
-  const rect = wordEl.getBoundingClientRect();
-  hint.style.position = 'absolute';
-  hint.style.left = `${rect.left + window.scrollX}px`;
-  hint.style.top = `${rect.bottom + window.scrollY + 5}px`;
-  hint.style.background = '#333';
-  hint.style.color = '#fff';
-  hint.style.padding = '4px 8px';
-  hint.style.borderRadius = '4px';
-  hint.style.zIndex = 9999;
-
-  // Авто-удаление через 2 секунды
-  setTimeout(() => hint.remove(), 2000);
-}
-
-
 // Перемешивание массива
 function shuffleArray(arr) {
   return arr.slice().sort(() => Math.random() - 0.5);
@@ -609,6 +580,36 @@ function renderWords() {
     `<div class="word" ${mobileMode ? '' : 'draggable="true"'} id="word${i}" ondragstart="dragWord(event)" onclick="tapWord(event)">${w}</div>`
   ).join('');
 }
+
+// Функция показа подсказки при тапе
+function showMobileHint(ev) {
+  if (!mobileMode) return; // только для мобильной версии
+  const wordEl = ev.currentTarget;
+  const translation = wordEl.dataset.translation;
+  if (!translation) return;
+
+  // Создаём подсказку
+  let hint = document.createElement('div');
+  hint.className = 'mobile-hint';
+  hint.textContent = translation;
+  document.body.appendChild(hint);
+
+  // Позиционируем подсказку рядом с словом
+  const rect = wordEl.getBoundingClientRect();
+  hint.style.position = 'absolute';
+  hint.style.left = `${rect.left + window.scrollX}px`;
+  hint.style.top = `${rect.bottom + window.scrollY + 5}px`;
+  hint.style.background = '#333';
+  hint.style.color = '#fff';
+  hint.style.padding = '4px 8px';
+  hint.style.borderRadius = '4px';
+  hint.style.zIndex = 9999;
+
+  // Авто-удаление через 2 секунды
+  setTimeout(() => hint.remove(), 2000);
+}
+
+
 
 // Drag & Drop
 function allowDrop(ev){ ev.preventDefault(); }
