@@ -345,6 +345,78 @@ function loadRandomText() {
   generateWords();
 }
 
+let dictionary = {};
+
+// Загрузка словаря
+fetch('dictionary.json')
+  .then(res => res.json())
+  .then(data => {
+    dictionary = data;
+    addWordHints(); // добавляем обработчики
+  })
+  .catch(err => console.error('Не удалось загрузить словарь', err));
+
+function addWordHints() {
+  const container = document.getElementById('story');
+
+  function wrapWords(node) {
+    if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim()) {
+      const parent = node.parentNode;
+      const words = node.nodeValue.split(/(\s+)/);
+      words.forEach(w => {
+        if (!w.trim()) {
+          parent.insertBefore(document.createTextNode(w), node);
+          return;
+        }
+        const lower = w.toLowerCase();
+        const span = document.createElement('span');
+        span.textContent = w;
+        span.className = 'story-word';
+        // только если есть перевод
+        if (dictionary[lower]) {
+          span.dataset.translation = dictionary[lower];
+          span.addEventListener('click', showMobileHint);
+        }
+        parent.insertBefore(span, node);
+      });
+      parent.removeChild(node);
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      node.childNodes.forEach(wrapWords);
+    }
+  }
+
+  container.childNodes.forEach(wrapWords);
+}
+
+// Функция показа подсказки при тапе
+function showMobileHint(ev) {
+  if (!mobileMode) return; // только для мобильной версии
+  const wordEl = ev.currentTarget;
+  const translation = wordEl.dataset.translation;
+  if (!translation) return;
+
+  // Создаём подсказку
+  let hint = document.createElement('div');
+  hint.className = 'mobile-hint';
+  hint.textContent = translation;
+  document.body.appendChild(hint);
+
+  // Позиционируем подсказку рядом с словом
+  const rect = wordEl.getBoundingClientRect();
+  hint.style.position = 'absolute';
+  hint.style.left = `${rect.left + window.scrollX}px`;
+  hint.style.top = `${rect.bottom + window.scrollY + 5}px`;
+  hint.style.background = '#333';
+  hint.style.color = '#fff';
+  hint.style.padding = '4px 8px';
+  hint.style.borderRadius = '4px';
+  hint.style.zIndex = 9999;
+
+  // Авто-удаление через 2 секунды
+  setTimeout(() => hint.remove(), 2000);
+}
+
+
 // Перемешивание массива
 function shuffleArray(arr) {
   return arr.slice().sort(() => Math.random() - 0.5);
