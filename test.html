@@ -550,11 +550,6 @@ function renderWords() {
   ).join('');
 }
 
-function cleanWord(word) {
-  // Берём только буквы (включая диакритические знаки)
-  const match = word.match(/[\p{L}\p{M}]+/gu);
-  return match ? match.join('').toLowerCase() : '';
-}
 
 function addWordHints() {
   const container = document.getElementById('story');
@@ -568,18 +563,15 @@ function addWordHints() {
           parent.insertBefore(document.createTextNode(w), node);
           return;
         }
-
-        const lower = cleanWord(w); // очищаем слово
+        const lower = w.toLowerCase();
         const span = document.createElement('span');
         span.textContent = w;
         span.className = 'story-word';
-
         if (dictionary[lower]) {
           span.dataset.translation = dictionary[lower];
-          span.title = dictionary[lower]; // для десктопа подсказка при hover
-          span.addEventListener('click', showMobileHint);
+          span.title = dictionary[lower]; // десктоп: tooltip
+          span.addEventListener('click', showMobileHint); // мобильный тап
         }
-
         parent.insertBefore(span, node);
       });
       parent.removeChild(node);
