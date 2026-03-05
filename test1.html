@@ -72,15 +72,18 @@ h2 {
 
 /* ===== WORD BANK ===== */
 #choices {
-  position: sticky;
+  position: fixed;     /* закрепляем внизу экрана */
+  left: 0;
+  right: 0;
   bottom: 0;
-  background: #0f172a;
-  padding: 15px 10px 20px 10px;
+  max-height: 25vh;    /* не более 1/4 высоты экрана */
+  overflow-y: auto;    /* включаем вертикальную прокрутку */
+  background: #0f172a; /* темный фон */
+  padding: 10px 15px;
   border-top: 2px solid rgba(255,255,255,0.1);
   text-align: center;
   z-index: 10;
 }
-
 .word {
   display: inline-block;
   padding: 8px 12px;
@@ -89,6 +92,7 @@ h2 {
   color: #ffffff;
   border-radius: 8px;
   user-select: none;
+  cursor: grab;         /* визуально для draggable */
 }
 
 #check, #refresh, #generateWords, #openRules {
