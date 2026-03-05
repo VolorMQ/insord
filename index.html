@@ -80,7 +80,8 @@ button {
   <button id="startExamBtn">Начать экзамен</button>
   <br><br>
   <!-- Кнопка для работы с текстом -->
-  <button id="textWorkBtn">Работать с текстом</button>
+  <button id="textWorkBtn">Работать с текстом (слова)</button>
+  <button id="textWorkBtn1">Работать с текстом (предложения)</button>
   <hr>
   <h3>Все формулы:</h3>
   <div id="allFormulas"></div>
@@ -235,6 +236,10 @@ window.addEventListener("load", () => {
 // ===== Кнопка для открытия test.html =====
 document.getElementById("textWorkBtn").onclick = () => {
   window.location.href = "test.html";
+};
+// ===== Кнопка для открытия test1.html =====
+document.getElementById("textWorkBtn1").onclick = () => {
+  window.location.href = "test1.html";
 };
 
 
