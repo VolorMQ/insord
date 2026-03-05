@@ -38,7 +38,7 @@ h2 {
 /* ===== TEXT FOCUS ===== */
 #story {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: auto;       /* прокрутка для текста */
   background: #ffffff;
   color: #111827;
   padding: 25px;
@@ -46,7 +46,8 @@ h2 {
   font-size: 20px;
   line-height: 1.8;
   box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-  margin-bottom: 20px;
+  margin-bottom: 10px;    /* немного отступа к блоку с предложениями */
+  max-height: 75vh;       /* максимум 3/4 экрана */
 }
 
 .placeholder, .insertedWord {
@@ -72,15 +73,17 @@ h2 {
 
 /* ===== WORD BANK ===== */
 #choices {
-  position: sticky;
-  bottom: 0;
-  background: #0f172a;
-  padding: 15px 10px 20px 10px;
+  position: relative;     /* теперь в потоке документа, не накладывается */
+  max-height: 25vh;       /* максимум 1/4 экрана */
+  overflow-y: auto;       /* прокрутка для предложений */
+  background: #0f172a;    /* темный фон */
+  padding: 10px 15px;
   border-top: 2px solid rgba(255,255,255,0.1);
   text-align: center;
   z-index: 10;
 }
 
+/* Стили для слов/предложений */
 .word {
   display: inline-block;
   padding: 8px 12px;
@@ -89,7 +92,9 @@ h2 {
   color: #ffffff;
   border-radius: 8px;
   user-select: none;
+  cursor: grab;           /* draggable визуально */
 }
+
 
 #check, #refresh, #generateWords, #openRules {
   margin-top: 10px;
@@ -168,8 +173,8 @@ h2 {
 /* 📱 Mobile */
 @media (max-width: 768px) {
   body { padding: 10px; }
-  #story { font-size: 18px; padding: 18px; margin-bottom: 120px; }
-  #choices { position: fixed; left: 0; right: 0; }
+  #story { font-size: 18px; padding: 18px; max-height: 70vh; margin-bottom: 5px; }
+  #choices { max-height: 30vh; }
 }
 </style>
 </head>
