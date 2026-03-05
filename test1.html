@@ -38,7 +38,7 @@ h2 {
 /* ===== TEXT FOCUS ===== */
 #story {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: auto;       /* прокрутка для всего текста */
   background: #ffffff;
   color: #111827;
   padding: 25px;
@@ -46,7 +46,7 @@ h2 {
   font-size: 20px;
   line-height: 1.8;
   box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-  margin-bottom: 20px;
+  margin-bottom: 10px;     /* немного отступа от блока с предложениями */
 }
 
 .placeholder, .insertedWord {
@@ -193,8 +193,7 @@ h2 {
 /* 📱 Mobile */
 @media (max-width: 768px) {
   body { padding: 10px; }
-  #story { font-size: 18px; padding: 18px; margin-bottom: 120px; }
-  #choices { position: fixed; left: 0; right: 0; }
+  #story { font-size: 18px; padding: 18px; margin-bottom: 5px; } /* меньше отступа к банку */
 }
 </style>
 </head>
