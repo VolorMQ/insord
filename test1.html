@@ -109,6 +109,27 @@ h2 {
   text-align: center;
 }
 
+/* Свернутое поле для предложения с прокруткой */
+.sentence-field {
+  border: 2px solid #800020; /* бордовый контур */
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  background: #f3f4f6;
+  color: #111827;
+  cursor: pointer;
+  overflow: hidden;
+  max-height: 40px; /* свернутое состояние */
+  transition: max-height 0.3s ease, background 0.3s ease;
+}
+
+/* Развёрнутое состояние с прокруткой, максимум 1/4 экрана */
+.sentence-field.open {
+  max-height: 25vh; /* 1/4 высоты экрана */
+  background: #ffffff;
+  overflow-y: auto;
+}
+
 /* ===== RULES PANEL ===== */
 
 #rulesOverlay {
@@ -348,6 +369,15 @@ function splitIntoSentences(text) {
   return text.match(/[^.!?]+[.!?]+/g) || [];
 }
 
+function makeSentencesExpandable() {
+  const fields = document.querySelectorAll('.sentence-field');
+  fields.forEach(field => {
+    field.addEventListener('click', () => {
+      field.classList.toggle('open');
+    });
+  });
+}
+
 // --- Выбор предложений БЕЗ подряд идущих ---
 function selectNonConsecutiveSentences(sentences, count) {
   const indices = [...Array(sentences.length).keys()];
@@ -443,6 +473,8 @@ function renderStoryWithSentenceGaps(sentences, selected) {
       storyEl.appendChild(document.createTextNode(sentence + ' '));
     }
   });
+  
+    makeSentencesExpandable();
 }
 
 
@@ -547,6 +579,7 @@ function renderStory() {
   // selectedWords уже в нижнем регистре (expected будет lower-case)
   insertPlaceholdersIntoDOM(selectedWords);
   addWordHints();
+  makeSentencesExpandable();
 }
 
 
@@ -640,6 +673,8 @@ function addWordHints() {
     parent.replaceChild(frag, textNode);
   });
 }
+
+
 
 // --- обновлённая подсказка для мобильного ---
 function showMobileHint(ev) {
