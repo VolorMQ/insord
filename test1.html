@@ -36,27 +36,44 @@ h2 {
 }
 
 /* ===== TEXT FOCUS ===== */
+/* ===== TEXT FOCUS COMPACT ===== */
 #story {
   flex: 1;
-  overflow-y: auto;       /* прокрутка для текста */
+  overflow-y: auto;          /* прокрутка для текста */
   background: #ffffff;
   color: #111827;
-  padding: 25px;
+  padding: 15px;             /* уменьшенный padding вокруг текста */
   border-radius: 16px;
   font-size: 20px;
-  line-height: 1.8;
+  line-height: 1.6;          /* межстрочный интервал меньше для компактности */
   box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-  margin-bottom: 10px;    /* немного отступа к блоку с предложениями */
-  max-height: 75vh;       /* максимум 3/4 экрана */
+  margin-bottom: 10px;
+  max-height: 75vh;          /* максимум 3/4 экрана */
 }
 
-.placeholder, .insertedWord {
+/* Абзацы без лишних отступов */
+#story p {
+  margin: 0;
+  padding: 4px 0;
+  text-indent: 20px; /* только первая строка абзаца сдвигается */
+}
+
+/* Заголовок и пример отдельно */
+#story h3,
+#story em {
+  margin: 0 0 6px 0;         /* немного места после заголовка/примера */
+}
+
+/* Placeholders и вставленные слова */
+.placeholder,
+.insertedWord {
   display: inline-block;
   min-width: 70px;
   padding: 6px;
   margin: 0 4px;
   border-bottom: 2px solid #2563eb;
   text-align: center;
+  vertical-align: baseline;  /* выравниваем по базовой линии, чтобы не давало лишний отступ */
 }
 
 .placeholder {
@@ -69,6 +86,11 @@ h2 {
   background: #2563eb;
   color: #ffffff;
   border-radius: 6px;
+}
+
+#story br {
+  line-height: 8;   /* минимальная высота строки */
+  display: block;   /* сохраняет перенос строки */
 }
 
 /* ===== WORD BANK ===== */
@@ -191,6 +213,11 @@ h2 {
   border-top: 1px solid #ddd;
 }
 
+#story p {
+  margin: 0;            /* убираем все стандартные отступы */
+  padding: 2px 0;       /* создаём минимальный промежуток между абзацами */
+}
+
 /* 📱 Mobile */
 @media (max-width: 768px) {
   body { padding: 10px; }
@@ -206,7 +233,7 @@ h2 {
 
 <div id="controls">
   <label>Antal sætning til at indsætte:
-    <input type="number" id="numWords" min="1" max="10" value="3">
+    <input type="number" id="numWords" min="1" max="10" value="5">
   </label>
   <label>
     <input type="checkbox" id="mobileMode"> Mobiltilstand
@@ -230,81 +257,176 @@ h2 {
 	  <h2>Методика выполнения задания на вставку пропущенных предложений (уровень DU2)</h2>
 
 	  <p>
-	  Такое задание проверяет понимание связности текста: в каждом абзаце удалено одно предложение, и нужно выбрать подходящую фразу из списка (среди вариантов бывают лишние).
-	  Чтобы правильно вставить пропущенное предложение, выполняйте следующие шаги.
+	  Запомни 4 шага. Если их делать всегда, процент правильных ответов резко растёт.
 	  </p>
 
-	  <hr>
-
-	  <h3>Шаг 1: Первичный просмотр текста</h3>
+	  <h3>Шаг 1. Сначала НЕ читай варианты</h3>
 	  <p>
-	  Прочитайте весь текст целиком быстро, чтобы понять его общую тему и развитие событий.
-	  Попробуйте разбить текст на структурно-смысловые части: отметить, о чём каждый абзац.
-	  Не останавливайтесь сразу на пропусках и вариантах — сначала сформируйте общее представление.
-	  В этих заданиях часто важна логика рассказа (последовательность действий, причинно-следственные связи), поэтому общее понимание поможет впоследствии.
+	  Это самая частая ошибка.<br>
+	  читаешь предложение до дырки<br>
+	  читаешь предложение после дырки<br>
+	  думаешь: что должно быть между ними
 	  </p>
 	  <p>
-	  В официальных инструкциях к тесту подчеркивается: «читайте текст внимательно и хорошо понимайте тот абзац, в котором отсутствует предложение».
+	  Тип связи:<br>
+	  причина<br>
+	  противоположность<br>
+	  результат<br>
+	  дополнительная информация
+	  </p>
+	  <p>Только потом смотри варианты.</p>
+
+	  <h3>Шаг 2. Смотри на первое слово предложения</h3>
+	  <p>Это главный сигнал.</p>
+	  <p>
+	  слово — значение — логика<br>
+	  Men — но — противоположность<br>
+	  For — потому что — причина<br>
+	  Og — и — добавление
+	  </p>
+	  <p>Иногда можно сразу вычеркнуть половину вариантов.</p>
+
+	  <h3>Шаг 3. Смотри на местоимения</h3>
+	  <p>Очень часто в вариантах есть: det, den, han</p>
+	  <p>Это значит: предложение ссылается на то, что уже было сказано.</p>
+	  <p>Пример:<br>
+	  Det giver en del kørsel.<br>
+	  Men det synes han er spændende.<br>
+	  det = kørsel<br>
+	  Он говорит про поездки.
 	  </p>
 
-	  <hr>
+	  <h3>Шаг 4. Смотри на логическое продолжение</h3>
+	  <p>Очень часто встречаются такие схемы:</p>
 
-	  <h3>Шаг 2: Анализ контекста до и после пропуска</h3>
-	  <p>
-	  После общего просмотра вернитесь к каждому пропуску и внимательно прочитайте предложения перед и после него.
-	  Обычно пропущенное предложение логически связывает то, что было до, с тем, что идёт после.
+	  <p>1. Причина<br>
+	  ситуация — For …<br>
+	  пример: Han har travlt.<br>
+	  For så tjener han mange penge.
 	  </p>
 
-	  <h4>Местоимения и указатели</h4>
-	  <p>
-	  Личные местоимения (он, она, они и т.п.) и указательные слова (этот, та, тот и т.д.) часто ссылаются на знакомые объекты или людей из соседних предложений.
-	  Если после пропуска начинается «она» или «он», задайте себе вопрос: кто из героев или предметов подходит под это местоимение?
-	  Пропущенное предложение, скорее всего, упоминало этого героя.
+	  <p>2. Противоположность<br>
+	  проблема — Men …<br>
+	  пример: Det giver en del kørsel.<br>
+	  Men det synes han er spændende.
 	  </p>
 
-	  <h4>Связующие слова и союзы</h4>
-	  <p>
-	  Слова вроде однако, поэтому, таким образом, затем, впервые и др. указывают на переход к новому действию или пояснение.
-	  Если перед пропуском или сразу после встречается такое слово, подумайте, какие отношения связывают абзац: противопоставление, причина-следствие и т.д.
+	  <p>3. Результат<br>
+	  действие — så …<br>
+	  пример: Han kommer hurtigt.<br>
+	  Så skal kunderne ikke vente.
 	  </p>
 
-	  <h4>Вопросы к пропуску</h4>
-	  <p>
-	  Чтобы найти недостающее предложение, задавайте вопросы:
-	  Кто? Что делает герой? Почему это произошло? Что случилось дальше? О чём идёт речь в абзаце?
-	  Сформулируйте вопрос, на который должно отвечать пропущенное предложение.
+	  <h3>Хитрый трюк DU2</h3>
+	  <p>Экзаменаторы любят 3 типа предложений:</p>
+
+	  <p>1. деньги — For så tjener han mange penge<br>
+	  если текст про работу, это часто правильный ответ.
+	  </p>
+	  <p>2. время — Og det tager lang tid<br>
+	  если текст про бумажную работу или ремонт.
+	  </p>
+	  <p>3. противоположность — Men det synes han er spændende<br>
+	  если сначала говорится что-то сложное или неудобное.
 	  </p>
 
-	  <hr>
+	  <h3>Супер-метод</h3>
+	  <p>Сначала вычеркни неправильные варианты.</p>
+	  <p>Пример: в этом тексте сразу видно:</p>
+	  <p>F — Den slags siger han nej til.<br>
+	  Это означает "От такого он отказывается".<br>
+	  Но в тексте написано: han siger aldrig nej<br>
+	  Значит F невозможно.
+	  </p>
+	  <p>D — Men det har han ikke brug for<br>
+	  "Но ему это не нужно"<br>
+	  Но текст говорит что он хочет учиться.<br>
+	  Значит D тоже невозможно.
+	  </p>
+	  <p>Мы уже убрали 2 варианта. Это делает задание намного легче.</p>
 
-	  <h3>Шаг 3: Выбор и проверка вариантов</h3>
-	  <ul>
-		<li>Сравните каждый вариант с контекстом.</li>
-		<li>Исключайте явные несоответствия.</li>
-		<li>Если несколько вариантов подходят — временно оставьте оба.</li>
-		<li>Не зацикливайтесь на одном пропуске.</li>
-	  </ul>
+	  <h3>Почему у тебя получился 0</h3>
+	  <p>Ты пытался:<br>
+	  переводить каждое слово<br>
+	  понимать текст идеально
+	  </p>
+	  <p>Но экзамен так не решается.<br>
+	  Его решают:<br>
+	  ✔ по логике<br>
+	  ✔ по связкам<br>
+	  ✔ по структуре текста
+	  </p>
 
-	  <hr>
+	  <h3>Самое важное</h3>
+	  <p>На DU2 текст почти всегда строится одинаково:<br>
+	  описание человека<br>
+	  его работа<br>
+	  плюсы работы<br>
+	  минусы работы<br>
+	  будущее
+	  </p>
 
-	  <h3>Если вы не уверены</h3>
-	  <ul>
-		<li>Не угадывайте сразу.</li>
-		<li>Отложите и вернитесь позже.</li>
-		<li>Помните, что есть лишние варианты.</li>
-		<li>После заполнения перечитайте текст целиком.</li>
-	  </ul>
+	  <h3>5 очень частых ловушек DU2</h3>
+	  <p>1️⃣ Ловушка «слишком логично»<br>
+	  Иногда вариант выглядит логично, но не подходит грамматически к тексту.<br>
+	  Пример:<br>
+	  Han vil gerne lære at lave fine gulve af træ.<br>
+	  På den måde kan han også blive Svend, der ordner alt ude og inde.<br>
+	  Вариант: H – Og det tager lang tid at lave.<br>
+	  Смысл вроде нормальный.<br>
+	  Но det — это «это». Что «это»? Полы? Учёба? Неясно.<br>
+	  А вот: B – For så kan han tage endnu flere opgaver.<br>
+	  Логика точная: Учится → может брать больше работы.
+	  </p>
 
-	  <hr>
+	  <p>2️⃣ Ловушка «одинаковые слова»<br>
+	  Иногда в варианте есть слово из текста, и мозг автоматически думает — это правильный ответ.<br>
+	  Но экзамен часто делает специально ложные совпадения.<br>
+	  Пример: В тексте opgaver<br>
+	  Вариант: Den slags siger han nej til.<br>
+	  Но в тексте сказано: Han siger aldrig nej<br>
+	  То есть вариант противоречит тексту.
+	  </p>
 
-	  <p>
-	  Ключевые приёмы: работать с контекстом, обращать внимание на местоимения,
-	  задавать вопросы (Кто? Что? Когда? Где? Почему?),
-	  учитывать вводные слова (однако, поэтому, затем и т.д.).
+	  <p>3️⃣ Ловушка «не тот тон»<br>
+	  Если текст позитивный, вставка почти всегда тоже позитивная.<br>
+	  Например: Han elsker sit nye arbejde.<br>
+	  После этого нельзя вставить негатив.<br>
+	  Поэтому вариант: Den slags siger han nej til — сразу подозрительный.
+	  </p>
+
+	  <p>4️⃣ Ловушка «лишнее объяснение»<br>
+	  Если после дырки уже есть For, значит объяснение уже идёт.<br>
+	  Пример: For der skal skrives regninger ud.<br>
+	  Если вставить предложение тоже с объяснением, будет плохо звучать.<br>
+	  Лучше вставить утверждение, а потом объяснение.
+	  </p>
+
+	  <p>5️⃣ Ловушка «не про того человека»<br>
+	  Иногда предложение говорит о другом объекте.<br>
+	  Например: Den slags siger han nej til.<br>
+	  Но текст говорит, что он почти никогда не отказывается от работы.<br>
+	  Это конфликт.
+	  </p>
+
+	  <h3>Самая полезная техника на экзамене</h3>
+	  <p>Используй метод вычеркивания.</p>
+	  <p>Пример: 8 вариантов.<br>
+	  Сразу смотри: Men — нужен ли контраст? For — нужна ли причина? Og — нужно ли продолжение?<br>
+	  Часто можно убрать 3–4 варианта сразу.
+	  </p>
+
+	  <p>Ещё один очень мощный трюк: Всегда проверяй, читается ли текст плавно.</p>
+	  <p>Прочитай:<br>
+	  Han laver et godt stykke arbejde.<br>
+	  Og han kommer næsten altid med det samme.<br>
+	  Så skal de ikke gå og vente i ugevis.<br>
+	  Это звучит как нормальный рассказ.<br>
+	  Если текст звучит странно — ответ почти всегда неправильный.
 	  </p>
 	</div>
-
 </div>
+
 
 <script>
 /* ==== RULES PANEL LOGIC ==== */
@@ -324,569 +446,412 @@ rulesOverlay.addEventListener('click', () => {
 </script>
 
 <script>
+/* ====== Полный заменяющий скрипт: вставьте вместо старого <script> блока ====== */
+
 let texts = [];
 let currentText = null;
-let availableWords = [];
-let selectedWords = [];
-let dragged = null;
-let fromChoice = false;
-let mobileMode = false;
-let selectedWordForTap = null;
 
-// Загрузка JSON с рассказами
-fetch('texts1.json')
-  .then(res => res.json())
+let correctSentences = [];
+let availableSentences = [];
+
+let dragged = null;
+let mobileMode = false;
+let selectedMobileWord = null;
+
+let dictionary = {}; // если нужен
+
+// ---------- LOAD TEXTS ----------
+fetch("texts1.json")
+  .then(r => r.json())
   .then(data => {
     texts = data;
     loadRandomText();
   })
-  .catch(()=> {
-    // если нет файла, можно задать fallback текст
-    texts = [{ text: "Sofie er 35 år. Hun bor i København, hvor hun arbejder som læge på et hospital. Hun synes, det er et spændende job, som giver hende mulighed for at hjælpe andre mennesker, og Sofie er rigtig glad for det. Men hun har en travl hverdag.<br>Hun skal nemlig både passe sit job og sin søn, Hugo, som er fire år gammel, og som hun bor alene sammen med.<br>Sofie blev skilt fra Hugos far for tre år siden. Kort tid efter blev Hugos far tilbudt et job i Tyskland, som han sagde ja til. Så nu bor og arbejder han i Berlin, og han kommer kun til København en eller to dage om måneden for at være sammen med sin søn. Det er lidt hårdt for Sofie. For det betyder, at han ikke kan hjælpe hende med at passe Hugo i hverdagen, og det kunne hun godt have brug for somme tider.<br>Sofie er læge på hospitalets hjerteafdeling, og som hospitalslæge har hun skiftende arbejdstider. For det meste arbejder hun om dagen, men hun har også aften- og nattevagter. Derfor skal Hugo nogle gange passes om aftenen og om natten. Men det er ikke noget problem. Han går nemlig i en børnehave, der har åbent 24 timer i døgnet. Så han kan godt være i børnehaven, selvom Sofie arbejder sent, og det er hun rigtig glad for.<br>Når Sofie har aften- eller nattevagt på hospitalet, skal Hugo sove i børnehaven om natten. Så afleverer hun ham i børnehaven om eftermiddagen sammen med en taske med tøj og hans bamse. Nogle af de andre børn græder altid, når de skal sige farvel til deres forældre og være i børnehaven om natten. Men det gør Hugo ikke. I starten var han somme tider lidt ked af det, når hans mor skulle gå. Men nu er han vant til det, og han synes faktisk, det er hyggeligt, når han skal sove i børnehaven.<br>Sofies skiftende arbejdstider på hospitalet betyder, at hun somme tider har fri to eller tre dage i træk, og de dage er Hugo ikke i børnehave. I stedet er han derhjemme sammen med hende, og det nyder Sofie. Det gør Hugo også. For han elsker at være sammen med sin mor hele dagen. Så hygger de derhjemme, går på legepladsen eller tager på en tur til zoo eller et andet sted.<br>Selvom Sofie er glad for sit job, og det fungerer fint med Hugos børnehave, kunne hun godt tænke sig en mere normal hverdag sammen med Hugo. Derfor har hun planer om at købe sin egen lægeklinik, hvor hun kun skal arbejde i dagtimerne. Hun har bare ikke råd endnu. Så det må vente, men Sofie håber, at hun har sparet penge nok sammen til at købe klinikken, når Hugo skal starte i skole om et par år." }];
+  .catch((err) => {
+    console.warn("fetch texts1.json failed, using fallback. err:", err);
+    texts = [{
+		"title": "Svend ordner næsten alt ude og inde. Svend er udlært murer og har været ansat i et byggefirma i ti år. Men det er dårlige tider for byggebranchen, så nu har han startet sit eget lille enmandsfirma. Han hjælper folk med stort og småt både ude og inde.",
+		"example": "Eksempel: Engang var Svend ansat i et byggefirma som murer. Her kunne han ikke selv bestemme, hvad han skulle lave. En dag mistede han sit job, fordi det gik dårligt for firmaet. Nu har han sit eget firma, hvor han selv bestemmer alt. Det går stadig dårligt for Svends gamle firma. <b>Men det gør det ikke for Svend.</b>",
+		"text": "Svend tilbyder at klare forskellige opgaver for folk med hus og have. Han maler og reparerer inde og ude. Han udskifter vinduer og døre, og hvis der er faldet en tagsten ned, sætter han en ny op. Han ordner have og meget andet. Svend elsker sit nye arbejde og synes, at alle opgaver er spændende. Der er kun en ting, han ikke kan lide ved at være selvstændig, nemlig papirarbejdet. Men det har han ikke brug for. For der skal skrives regninger ud, og alt det der med skat og moms skal ordnes. Men det skal man jo, når man har et firma. <br> Mange af Svends kunder er ældre mennesker. Da de var yngre, lavede de selv de små reparationer i huset. De passede også selv deres have, men det har de ikke kræfter til mere. Så de er glade for, at de har lært Svend at kende. Han laver nemlig et godt stykke arbejde. Og han kommer næsten altid med det samme. Så skal de ikke gå og vente i ugevis, hvis der er et eller andet, der ikke fungerer. <br> Svend har mest at lave fra marts til oktober, for i den periode er der meget havearbejde. Om foråret ordner han folks haver og planter nye blomster. Om sommeren klipper han hæk og passer blomster og grøntsager. Så han har virkelig travlt i den periode. Og det kan han godt lide. For så tjener han mange penge. Men han er også glad for, at han har mindre travlt fra november til februar, så han kan slappe lidt af indimellem. Om efteråret er der igen hække, der skal klippes, eller træer, der skal beskæres. <br> Vinterhalvåret er nemlig en mere stille periode, fordi der ikke er noget havearbejde. Men han får flere og flere kunder, der skal have lavet noget ved deres hus. Han får også kunder længere og længere væk fra, hvor han bor. Det giver en del kørsel. Men det synes han er spændende. For han kommer rundt i landet og ser mange forskellige steder og møder nye mennesker. Så han siger aldrig nej, hvis han ellers tror, det er en opgave, han kan klare. <br> Svend ser meget lyst på fremtiden som direktør, håndværker og gartner i sit eget lille enmandsfirma. Han synes, han har fået et langt bedre liv, end han havde før. For eksempel kan han tilmelde sig et kursus på teknisk skole, hvis han finder et rigtigt godt et. Og der er stadig ting, han har brug for at lære. For eksempel vil han gerne lære at lave fine gulve af træ. For så kan han tage endnu flere opgaver. På den måde kan han også blive Svend, der ordner alt ude og inde."
+    }];
     loadRandomText();
   });
 
-// Случайный выбор текста
-function loadRandomText() {
-  const randomIndex = Math.floor(Math.random() * texts.length);
-  currentText = JSON.parse(JSON.stringify(texts[randomIndex])); // глубокая копия
-  generateWords();
-}
-
-let dictionary = {};
-
-// Загрузка словаря
-fetch('dictionary.json')
-  .then(res => res.json())
-  .then(data => {
-    dictionary = data;
-    addWordHints(); // добавляем обработчики
-  })
-  .catch(err => console.error('Не удалось загрузить словарь', err));
-
-// Перемешивание массива
-function shuffleArray(arr) {
-  return arr.slice().sort(() => Math.random() - 0.5);
-}
-
-// --- Разбивка текста на предложения ---
-function splitIntoSentences(text) {
-  return text.match(/[^.!?]+[.!?]+/g) || [];
-}
-
-function makeSentencesExpandable() {
-  const fields = document.querySelectorAll('.sentence-field');
-  fields.forEach(field => {
-    field.addEventListener('click', () => {
-      field.classList.toggle('open');
-    });
-  });
-}
-
-// --- Выбор предложений БЕЗ подряд идущих ---
-function selectNonConsecutiveSentences(sentences, count) {
-  const indices = [...Array(sentences.length).keys()];
-  const shuffled = shuffleArray(indices);
-
-  const selected = [];
-  const used = new Set();
-
-  for (let i of shuffled) {
-    if (selected.length >= count) break;
-
-    // главное условие — НЕ брать соседние
-    if (!used.has(i - 1) && !used.has(i + 1) && !used.has(i)) {
-      selected.push({
-        index: i,
-        sentence: sentences[i]
-      });
-      used.add(i);
-    }
+// ---------- UTILS ----------
+function shuffle(array) {
+  const a = Array.isArray(array) ? [...array] : [];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
+  return a;
+}
+
+function splitSentences(text) {
+  if (!text || typeof text !== "string") return [];
+  // Разделяем по окончаниям предложений. Если нет знаков — возвращаем весь абзац как одно "предложение".
+  const parts = text.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(s => s.length > 0);
+  if (parts.length === 0 && text.trim().length > 0) return [text.trim()];
+  return parts;
+}
+
+function clean(str) {
+  if (typeof str !== 'string') return '';
+  return str.toLowerCase().replace(/[^\p{L}]/gu, '');
+}
+
+// ---------- PICK 1 SENTENCE PER <br> ----------
+function pickSentencesByBr(text) {
+  if (!text || typeof text !== 'string') return [];
+
+  // Строго по <br> (любые варианты)
+  const paragraphs = text.split(/<br\s*\/?>/gi);
+  const selected = [];
+
+  paragraphs.forEach((p, idx) => {
+    const paragraph = (p || '').trim();
+    if (!paragraph) return; // пустой абзац — пропускаем
+
+    const sentences = splitSentences(paragraph);
+    // Нужны хотя бы 3 предложения, чтобы взять "серединное"
+    if (sentences.length < 3) return;
+
+    const middle = sentences.slice(1, -1); // не первое и не последнее
+    if (!middle.length) return;
+
+    const r = Math.floor(Math.random() * middle.length);
+    selected.push(middle[r].trim());
+  });
+
+  console.log(`pickSentencesByBr -> paragraphs=${text.split(/<br\s*\/?>/gi).length}, picked=${selected.length}`);
+  return selected;
+}
+
+// ---------- LOAD & GEN ----------
+function loadRandomText() {
+  if (!Array.isArray(texts) || texts.length === 0) {
+    currentText = {
+      title: "Нет текста",
+      example: "",
+      text: "Текст не загружен. <br>Проверьте файл texts1.json или сеть."
+    };
+  } else {
+    const index = Math.floor(Math.random() * texts.length);
+    currentText = texts[index];
+  }
+  generateExercise();
+}
+
+// ---------- PICK 1 SENTENCE PER PARAGRAPH (по <br>) ----------
+function cleanSentence(s) {
+  return s.replace(/<br\s*\/?>/gi, '').trim();
+}
+
+// ---------- PICK 1 SENTENCE PER PARAGRAPH ----------
+function pickSentencesByParagraph(text) {
+  if (!text || typeof text !== 'string') return [];
+
+  const paragraphs = text.split(/<br\s*\/?>/gi);
+  const selected = [];
+
+  paragraphs.forEach((p) => {
+    const paragraph = (p || '').trim();
+    if (!paragraph) return;
+
+    const sentences = splitSentences(paragraph);
+    if (sentences.length === 0) return;
+
+    let choice = null;
+    if (sentences.length >= 3) {
+      const middle = sentences.slice(1, -1);
+      choice = middle[Math.floor(Math.random() * middle.length)];
+    } else if (sentences.length === 2) {
+      choice = sentences[Math.floor(Math.random() * 2)];
+    } else { // ===1
+      choice = sentences[0];
+    }
+
+    if (choice) selected.push(cleanSentence(choice));
+  });
 
   return selected;
 }
 
-
-// ---- helper: получить все слова (Unicode-aware) ----
-function extractWords(text){
-  try {
-    // работает в современных браузерах: берём буквы и комбинации диакритики
-    return text.match(/[\p{L}\p{M}]+/gu) || [];
-  } catch(e){
-    // fallback — старые браузеры: добавим æøå вручную
-    return text.match(/\b[\wæøåÆØÅ]+\b/g) || [];
-  }
-}
-
-// ---- helper: токенизация текста (слова и всё остальное) ----
-function tokenize(text){
-  try {
-    return text.match(/[\p{L}\p{M}]+|[^\p{L}\p{M}]+/gu) || [text];
-  } catch(e){
-    // fallback: разбиваем на слова/не-слова (сохраняя разделители)
-    return text.split(/(\W+)/);
-  }
-}
-
-// ---- Генерация случайных слов для вставки (замена старой функции) ----
-function generateWords() {
-  const requestedNum = parseInt(document.getElementById('numWords').value, 10) || 0;
-
-  let rawText = currentText.text || '';
-  rawText = rawText.replace(/<br>/g, ' ').replace(/<\/?[^>]+(>|$)/g, '');
-
-  const sentences = splitIntoSentences(rawText);
-
-  const selected = selectNonConsecutiveSentences(sentences, requestedNum);
-
-  selectedWords = selected.map(obj => obj.sentence.trim());
-  availableWords = shuffleArray(selectedWords.slice());
-
-  renderStoryWithSentenceGaps(sentences, selected);
-  renderWords();
-  document.getElementById('result').textContent = '';
-}
-
-// ---- Создание текста с placeholders, заменяем только ОДНО (первое) вхождение каждого слова ----
-// helper: экранирует строку для использования в RegExp
-function escapeRegExp(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function renderStoryWithSentenceGaps(sentences, selected) {
-  const storyEl = document.getElementById('story');
-  storyEl.innerHTML = '';
-
-  const selectedMap = new Map();
-  selected.forEach(obj => {
-    selectedMap.set(obj.index, obj.sentence.trim().toLowerCase());
-  });
-
-  sentences.forEach((sentence, index) => {
-    if (selectedMap.has(index)) {
-      const placeholder = document.createElement('span');
-      placeholder.className = 'placeholder';
-      placeholder.textContent = '__________';
-      placeholder.dataset.expected = selectedMap.get(index);
-      placeholder.ondrop = dropWord;
-      placeholder.ondragover = allowDrop;
-      placeholder.onclick = tapPlaceholder;
-      storyEl.appendChild(placeholder);
-      storyEl.appendChild(document.createTextNode(' '));
-    } else {
-      storyEl.appendChild(document.createTextNode(sentence + ' '));
-    }
-  });
-  
-    makeSentencesExpandable();
-}
-
-
-// Вставляет placeholder'ы в DOM (#story) по одному для каждого слова в массиве words.
-// Работает через обход текстовых узлов, чтобы не ломать HTML.
-function insertPlaceholdersIntoDOM(words) {
-  const container = document.getElementById('story');
-
-  function collectTextNodes() {
-    const nodes = [];
-    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
-      acceptNode(node) {
-        if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-        let p = node.parentNode;
-        while (p && p !== container) {
-          if (p.classList && (p.classList.contains('placeholder') || p.classList.contains('insertedWord'))) {
-            return NodeFilter.FILTER_REJECT;
-          }
-          p = p.parentNode;
-        }
-        return NodeFilter.FILTER_ACCEPT;
-      }
-    }, false);
-    let n;
-    while (n = walker.nextNode()) nodes.push(n);
-    return nodes;
+// ---------- GENERATE EXERCISE ----------
+function generateExercise() {
+  if (!currentText || typeof currentText.text !== 'string') {
+    document.getElementById("story").innerHTML = "<p>Нет доступного текста.</p>";
+    return;
   }
 
-  let textNodes = collectTextNodes();
+  const text = currentText.text;
 
-  words.forEach(word => {
-    let placed = false;
-    const lowerWord = word.toLowerCase();
+  // 1 предложение на абзац, очищаем <br>
+  correctSentences = pickSentencesByParagraph(text);
 
-    for (let i = 0; i < textNodes.length; i++) {
-      const tn = textNodes[i];
-      const txt = tn.nodeValue;
+  // Берём все предложения для дистракторов и очищаем <br>
+  const allSentences = splitSentences(text).map(cleanSentence);
 
-      // ищем слово как отдельное, независимо от регистра
-      const regex = new RegExp(`\\b${escapeRegExp(lowerWord)}\\b`, 'iu');
-      const match = regex.exec(txt);
-      if (!match) continue;
+  // Дистракторы — максимум 2
+  const normalizedCorrect = new Set(correctSentences.map(clean));
+  const distractors = shuffle(
+    allSentences.filter(s => !normalizedCorrect.has(clean(s)))
+  ).slice(0, 2);
 
-      const index = match.index;
-      const beforeText = txt.slice(0, index);
-      const afterText = txt.slice(index + match[0].length);
+  availableSentences = shuffle([...correctSentences, ...distractors]);
 
-      const beforeNode = document.createTextNode(beforeText);
-      const afterNode = document.createTextNode(afterText);
-
-      const placeholder = document.createElement('span');
-      placeholder.className = 'placeholder';
-      placeholder.textContent = '___';
-      placeholder.dataset.expected = lowerWord; // гарантировано lower-case
-      placeholder.ondrop = dropWord;
-      placeholder.ondragover = allowDrop;
-      placeholder.onclick = tapPlaceholder;
-
-      const parent = tn.parentNode;
-      parent.insertBefore(beforeNode, tn);
-      parent.insertBefore(placeholder, tn);
-      parent.insertBefore(afterNode, tn);
-      parent.removeChild(tn);
-
-      textNodes = collectTextNodes();
-      placed = true;
-      break;
-    }
-
-    if (!placed) {
-      const placeholder = document.createElement('span');
-      placeholder.className = 'placeholder';
-      placeholder.textContent = '___';
-      placeholder.dataset.expected = lowerWord;
-      placeholder.ondrop = dropWord;
-      placeholder.ondragover = allowDrop;
-      placeholder.onclick = tapPlaceholder;
-      container.appendChild(placeholder);
-      textNodes = collectTextNodes();
-    }
-  });
+  renderStory();
+  renderChoices();
+  updateDebugInfo && updateDebugInfo();
 }
 
 
-// Обновлённая renderStory: сначала формируем HTML (абзацы/переносы),
-// затем вызываем insertPlaceholdersIntoDOM чтобы аккуратно вставить placeholder'ы.
+// ---------- RENDER STORY ----------
 function renderStory() {
-  // 1) Построить HTML из currentText.text: /p -> <p>, /br -> <br>
-  const raw = currentText.text || '';
+  const story = document.getElementById("story");
+  story.innerHTML = "";
 
-  // Разбиваем по /p, оборачиваем в <p>, внутри блока заменяем /br на <br>
-  const html = raw.split('/p').map(block => {
-    const inner = block.trim().replace(/\/br/g, '<br>');
-    return `<p>${inner}</p>`;
-  }).join('');
-
-  // Вставляем в контейнер (ещё без placeholder'ов)
-  const storyEl = document.getElementById('story');
-  storyEl.innerHTML = html;
-
-  // 2) Вставляем placeholder'ы в DOM (один placeholder на каждое слово в selectedWords)
-  // selectedWords уже в нижнем регистре (expected будет lower-case)
-  insertPlaceholdersIntoDOM(selectedWords);
-  addWordHints();
-  makeSentencesExpandable();
-}
-
-
-// Отображение доступных слов
-function renderWords() {
-  const choicesDiv = document.getElementById('choices');
-  // при мобилке слова не draggable
-  choicesDiv.innerHTML = availableWords.map((w,i) =>
-    `<div class="word" ${mobileMode ? '' : 'draggable="true"'} id="word${i}" ondragstart="dragWord(event)" onclick="tapWord(event)">${w}</div>`
-  ).join('');
-}
-
-
-function cleanWord(word) {
-  if (!word) return '';
-  const s = String(word).trim().toLowerCase();
-  try {
-    const m = s.match(/[\p{L}\p{M}]+/gu);
-    return m ? m.join('') : '';
-  } catch (e) {
-    // fallback для браузеров без Unicode property support
-    const m = s.match(/[A-Za-zÀ-ÖØ-öø-ÿÆæÅåŒœ]+/);
-    return m ? m[0] : '';
+  if (!currentText) {
+    story.innerHTML = "<p>Нет текста для показа.</p>";
+    return;
   }
-}
 
-// --- helper: разворачиваем старые .story-word ---
-function unwrapStoryWords() {
-  const story = document.getElementById('story');
-  if (!story) return;
-  const existing = Array.from(story.querySelectorAll('.story-word'));
-  existing.forEach(span => {
-    span.replaceWith(document.createTextNode(span.textContent));
-  });
-}
+  // Заголовок
+  const h = document.createElement("h3");
+  h.textContent = currentText.title || "";
+  story.appendChild(h);
 
-// --- обновлённая addWordHints ---
-function addWordHints() {
-  const container = document.getElementById('story');
-  if (!container) return;
+  // Пример (как HTML)
+  if (currentText.example) {
+    const ex = document.createElement("p");
+    ex.innerHTML = `<em>${currentText.example}</em>`;
+    story.appendChild(ex);
+  }
 
-  // сначала убираем старые обёртки
-  unwrapStoryWords();
+  const normalizedCorrect = new Set((correctSentences || []).map(s => clean(s)));
 
-  // TreeWalker обходит все текстовые узлы, кроме тех что внутри placeholder/insertedWord
-  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, {
-    acceptNode(node) {
-      if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-      let p = node.parentNode;
-      while (p && p !== container) {
-        if (p.classList && (p.classList.contains('placeholder') || p.classList.contains('insertedWord'))) {
-          return NodeFilter.FILTER_REJECT;
-        }
-        p = p.parentNode;
-      }
-      return NodeFilter.FILTER_ACCEPT;
+  // Разбиваем строго по <br>
+  const paragraphs = (currentText.text || '').split(/<br\s*\/?>/gi);
+
+  paragraphs.forEach((p) => {
+    const paraEl = document.createElement("p");
+    const paragraph = (p || '').trim();
+
+    if (!paragraph) {
+      // сохраняем пустой абзац
+      story.appendChild(paraEl);
+      story.appendChild(document.createElement("br"));
+      return;
     }
-  }, false);
 
-  let tn;
-  const textNodes = [];
-  while (tn = walker.nextNode()) textNodes.push(tn);
+    const sentences = splitSentences(paragraph);
+    if (sentences.length === 0) {
+      paraEl.textContent = paragraph;
+      story.appendChild(paraEl);
+      story.appendChild(document.createElement("br"));
+      return;
+    }
 
-  textNodes.forEach(textNode => {
-    const parent = textNode.parentNode;
-    const parts = textNode.nodeValue.split(/(\s+)/); // сохраняем пробелы
-
-    const frag = document.createDocumentFragment();
-
-    parts.forEach(part => {
-      if (!part) return;
-      if (!part.trim()) {
-        frag.appendChild(document.createTextNode(part));
-        return;
-      }
-
-      const key = cleanWord(part);
-      if (key && dictionary && dictionary[key]) {
-        const span = document.createElement('span');
-        span.className = 'story-word';
-        span.textContent = part;
-        span.dataset.translation = dictionary[key];
-        span.title = dictionary[key]; // десктоп: tooltip
-        span.addEventListener('click', showMobileHint); // мобильный тап
-        frag.appendChild(span);
+    sentences.forEach(s => {
+      const trimmed = s.trim();
+      if (normalizedCorrect.has(clean(trimmed))) {
+        const ph = document.createElement("span");
+        ph.className = "placeholder";
+        ph.textContent = "________";
+        ph.dataset.expected = trimmed; // оригинальная строка
+        ph.ondrop = drop;
+        ph.ondragover = e => e.preventDefault();
+        ph.onclick = mobileInsert;
+        paraEl.appendChild(ph);
+        paraEl.appendChild(document.createTextNode(" "));
       } else {
-        frag.appendChild(document.createTextNode(part));
+        paraEl.appendChild(document.createTextNode(trimmed + " "));
       }
     });
 
-    parent.replaceChild(frag, textNode);
+    story.appendChild(paraEl);
+    story.appendChild(document.createElement("br"));
   });
+
+  addHints();
 }
 
+// ---------- RENDER CHOICES ----------
+function renderChoices() {
+  const box = document.getElementById("choices");
+  box.innerHTML = "";
 
+  (availableSentences || []).forEach((s, i) => {
+    const div = document.createElement("div");
+    div.className = "word";
+    div.id = `w${i}`;
+    div.textContent = s;
+    if (!mobileMode) div.setAttribute("draggable", "true");
+    div.ondragstart = drag;
+    div.onclick = mobileSelect;
+    box.appendChild(div);
+  });
 
-// --- обновлённая подсказка для мобильного ---
-function showMobileHint(ev) {
-  if (!mobileMode) return; // только мобилка
-  const wordEl = ev.currentTarget;
-  const translation = wordEl.dataset.translation;
-  if (!translation) return;
-
-  const hint = document.createElement('div');
-  hint.className = 'mobile-hint';
-  hint.textContent = translation;
-  document.body.appendChild(hint);
-
-  const rect = wordEl.getBoundingClientRect();
-  hint.style.position = 'absolute';
-  hint.style.left = `${rect.left + window.scrollX}px`;
-  hint.style.top = `${rect.bottom + window.scrollY + 5}px`;
-  hint.style.background = '#333';
-  hint.style.color = '#fff';
-  hint.style.padding = '4px 8px';
-  hint.style.borderRadius = '4px';
-  hint.style.zIndex = 9999;
-
-  setTimeout(() => hint.remove(), 2000);
-}
-// Drag & Drop
-function allowDrop(ev){ ev.preventDefault(); }
-
-function dragWord(ev){
-  if(mobileMode) return; // в мобилке drag отключаем
-  dragged = ev.target;
-  fromChoice = true;
-  ev.dataTransfer.setData("text", ev.target.textContent);
-  ev.target.classList.add('dragging');
-}
-
-function dropWord(ev){
-  if (mobileMode) return; // в мобилке drop отключаем
-  ev.preventDefault();
-  const placeholder = ev.target;
-  if (!dragged) return;
-
-  const expected = placeholder.dataset && placeholder.dataset.expected ? placeholder.dataset.expected : null;
-  const wordText = dragged.textContent.trim();
-
-  // создаём вставленный span и копируем expected
-  const span = document.createElement('span');
-  span.className = 'insertedWord';
-  span.draggable = true;
-  span.textContent = wordText;
-  if (expected) span.dataset.expected = expected;
-
-  span.ondragstart = dragInsertedWord;
-  span.onclick = tapInsertedWord;
-  placeholder.parentNode.replaceChild(span, placeholder);
-
-  if (fromChoice) {
-    const index = availableWords.indexOf(dragged.textContent);
-    if (index > -1) availableWords.splice(index, 1);
-    renderWords();
-  }
-
-  if (dragged) dragged.classList.remove('dragging');
-  dragged = null;
+  // allow dropping inserted words back to bank (double-click also works)
+  box.ondragover = e => e.preventDefault();
+  box.ondrop = e => {
+    e.preventDefault();
+    // если dragged — это элемент из страницы (insertedWord), вернуть его
+    if (dragged && dragged.classList && dragged.classList.contains("insertedWord")) {
+      const word = dragged.textContent.trim();
+      availableSentences.push(word);
+      // заменим место вставки на placeholder
+      const ph = document.createElement("span");
+      ph.className = "placeholder";
+      ph.textContent = "___";
+      ph.dataset.expected = dragged.dataset.expected || "";
+      ph.ondrop = drop;
+      ph.ondragover = e => e.preventDefault();
+      ph.onclick = mobileInsert;
+      dragged.replaceWith(ph);
+      dragged = null;
+      renderChoices();
+      updateDebugInfo();
+    }
+  };
 }
 
-
-function dragInsertedWord(ev){
+// ---------- DRAG & DROP ----------
+function drag(ev) {
   if (mobileMode) return;
-  const wordEl = ev.target;
-  dragged = wordEl;
-  fromChoice = false;
-  ev.dataTransfer.setData("text", wordEl.textContent);
-  ev.target.classList.add('dragging');
-
-  // вернуть слово в банк
-  const wordText = wordEl.textContent.trim();
-  availableWords.push(wordText);
-  renderWords();
-
-  // создаём placeholder и переносим expected туда
-  const placeholder = document.createElement('span');
-  placeholder.className = 'placeholder';
-  placeholder.textContent = '___';
-  if (wordEl.dataset && wordEl.dataset.expected) {
-    placeholder.dataset.expected = wordEl.dataset.expected;
-  }
-  placeholder.ondrop = dropWord;
-  placeholder.ondragover = allowDrop;
-  placeholder.onclick = tapPlaceholder;
-
-  wordEl.parentNode.replaceChild(placeholder, wordEl);
-  dragged = null;
+  dragged = ev.target;
 }
 
-// === MOBILE: tap handlers ===
-function tapWord(ev){
-  if(!mobileMode) return;
-  const el = ev.currentTarget;
-  const word = el.textContent.trim();
-  if(selectedWordForTap === word){
-    selectedWordForTap = null;
-    el.style.background = ''; // сброс подсветки
-  } else {
-    selectedWordForTap = word;
-    // подсветим выбранное
-    document.querySelectorAll('#choices .word').forEach(w => w.style.background = '#4CAF50');
-    el.style.background = '#1976D2';
-  }
+function drop(ev) {
+  ev.preventDefault();
+  const placeholder = ev.target.closest('.placeholder');
+  if (!placeholder) return;
+
+  // dragged может быть дивом из choices (word)
+  const word = dragged ? dragged.textContent.trim() : null;
+  if (!word) return;
+
+  // вставляем
+  const span = document.createElement("span");
+  span.className = "insertedWord";
+  span.textContent = word;
+  span.dataset.expected = placeholder.dataset.expected || "";
+  // двойной клик возвращает в банк
+  span.ondblclick = () => {
+    availableSentences.push(span.textContent.trim());
+    const ph = document.createElement("span");
+    ph.className = "placeholder";
+    ph.textContent = "___";
+    ph.dataset.expected = span.dataset.expected || "";
+    ph.ondrop = drop;
+    ph.ondragover = e => e.preventDefault();
+    ph.onclick = mobileInsert;
+    span.replaceWith(ph);
+    renderChoices();
+    updateDebugInfo();
+  };
+
+  placeholder.replaceWith(span);
+  // удаляем слово из choices
+  availableSentences = availableSentences.filter(w => w !== word);
+  renderChoices();
+  updateDebugInfo();
 }
 
-function tapPlaceholder(ev){
+// ---------- MOBILE ----------
+function mobileSelect(ev) {
   if (!mobileMode) return;
-  if (!selectedWordForTap) return;
-  const placeholder = ev.target;
-  const expected = placeholder.dataset && placeholder.dataset.expected ? placeholder.dataset.expected : null;
-  const wordText = selectedWordForTap;
-
-  const span = document.createElement('span');
-  span.className = 'insertedWord';
-  span.textContent = wordText;
-  // mobile: не делаем draggable, но сохраняем expected
-  if (expected) span.dataset.expected = expected;
-  span.draggable = false;
-  span.onclick = tapInsertedWord;
-
-  placeholder.parentNode.replaceChild(span, placeholder);
-
-  // убрать слово из availableWords
-  const idx = availableWords.indexOf(selectedWordForTap);
-  if (idx > -1) availableWords.splice(idx, 1);
-  selectedWordForTap = null;
-  renderWords();
+  const word = ev.target.textContent.trim();
+  selectedMobileWord = word;
+  // подсветка
+  document.querySelectorAll("#choices .word").forEach(w => w.style.background = "#1f2937");
+  ev.target.style.background = "#1976D2";
 }
 
-function tapInsertedWord(ev){
+function mobileInsert(ev) {
   if (!mobileMode) return;
-  const wordEl = ev.target;
-  const wordText = wordEl.textContent.trim();
-  const expected = wordEl.dataset && wordEl.dataset.expected ? wordEl.dataset.expected : null;
+  if (!selectedMobileWord) {
+    // если нажали placeholder — ничего не делаем
+    return;
+  }
+  const ph = ev.target.closest('.placeholder');
+  if (!ph) return;
 
-  // вернуть слово в банк
-  availableWords.push(wordText);
-  renderWords();
+  const span = document.createElement("span");
+  span.className = "insertedWord";
+  span.textContent = selectedMobileWord;
+  span.dataset.expected = ph.dataset.expected || "";
+  span.ondblclick = () => {
+    availableSentences.push(span.textContent.trim());
+    const ph2 = document.createElement("span");
+    ph2.className = "placeholder";
+    ph2.textContent = "___";
+    ph2.dataset.expected = span.dataset.expected || "";
+    ph2.ondrop = drop;
+    ph2.ondragover = e => e.preventDefault();
+    ph2.onclick = mobileInsert;
+    span.replaceWith(ph2);
+    renderChoices();
+    updateDebugInfo();
+  };
 
-  // восстановить placeholder с expected (если был)
-  const placeholder = document.createElement('span');
-  placeholder.className = 'placeholder';
-  placeholder.textContent = '___';
-  if (expected) placeholder.dataset.expected = expected;
-  placeholder.ondrop = dropWord;
-  placeholder.ondragover = allowDrop;
-  placeholder.onclick = tapPlaceholder;
-
-  wordEl.parentNode.replaceChild(placeholder, wordEl);
+  ph.replaceWith(span);
+  availableSentences = availableSentences.filter(w => w !== selectedMobileWord);
+  selectedMobileWord = null;
+  renderChoices();
+  updateDebugInfo();
 }
 
-// Проверка (оставлена как в твоём рабочем коде — сравнение по позиции)
-document.getElementById('check').addEventListener('click', () => {
-  const inserted = Array.from(document.querySelectorAll('.insertedWord'));
-  let allCorrect = true;
-
-  // Надёжная очистка слова: сначала пробуем Unicode property (если поддерживается),
-  // при ошибке — fallback на латинский + расширенные буквы (dansk/ё/à-ÿ и т.п.)
-  function cleanWordForCompare(word) {
-    if (!word) return '';
-    const s = String(word).trim().toLowerCase();
-    try {
-      // может бросить SyntaxError в средах без поддержки \p
-      const m = s.match(/[\p{L}\p{M}]+/gu);
-      return m && m.length ? m[0].toLowerCase() : '';
-    } catch (e) {
-      // fallback: набор латинских и большинства европейских букв + æøå etc.
-      const m = s.match(/[A-Za-zÀ-ÖØ-öø-ÿÆæÅåŒœ]+/);
-      return m ? m[0].toLowerCase() : '';
-    }
-  }
-
-  inserted.forEach(el => {
-    const actual = cleanWordForCompare(el.textContent);
-    const expectedRaw = el.dataset && el.dataset.expected ? el.dataset.expected : '';
-    const expected = cleanWordForCompare(expectedRaw);
-
-    if (expected && actual === expected) {
-      el.style.background = '#d4edda';
-      el.style.borderBottom = '2px solid green';
+// ---------- CHECK ----------
+document.getElementById("check").onclick = () => {
+  let ok = true;
+  document.querySelectorAll(".insertedWord").forEach(el => {
+    const actual = clean(el.textContent);
+    const expected = clean(el.dataset.expected || "");
+    if (actual === expected) {
+      el.style.background = "#d4edda";
+      el.style.borderRadius = "6px";
     } else {
-      el.style.background = '#f8d7da';
-      el.style.borderBottom = '2px solid red';
-      allCorrect = false;
+      el.style.background = "#f8d7da";
+      ok = false;
     }
   });
+  document.getElementById("result").textContent =
+    ok ? "Alle svar er korrekte 🎉" : "Nogle svar er forkerte";
+};
 
-  document.getElementById('result').textContent = allCorrect ? 'Alle svar er korrekte! 🎉' : 'Nogle svar er forkerte. Prøv igen.';
-});
+// ---------- HINTS (dictionary) ----------
+function addHints() {
+  if (!Object.keys(dictionary).length) return;
+  const container = document.getElementById("story");
+  const words = container.innerHTML.split(/\s+/);
+  container.innerHTML = words.map(w => {
+    const key = clean(w);
+    if (dictionary[key]) return `<span class="story-word" title="${dictionary[key]}">${w}</span>`;
+    return w;
+  }).join(" ");
+}
 
+// ---------- DEBUG / INFO ----------
+function updateDebugInfo() {
+  const paragraphs = (currentText && currentText.text) ? currentText.text.split(/<br\s*\/?>/gi).length : 0;
+  const picked = (correctSentences || []).length;
+  const choices = (availableSentences || []).length;
+  const s = `Paragraphs: ${paragraphs}; Picked: ${picked}; Choices: ${choices}`;
+  console.log(s);
+  document.getElementById("result").textContent = s;
+}
 
-
-// Кнопки
-document.getElementById('refresh').addEventListener('click', loadRandomText);
-document.getElementById('generateWords').addEventListener('click', generateWords);
-document.getElementById('mobileMode').addEventListener('change', (e) => {
+// ---------- BUTTONS ----------
+document.getElementById("refresh").onclick = loadRandomText;
+document.getElementById("generateWords").onclick = generateExercise;
+document.getElementById("mobileMode").onchange = e => {
   mobileMode = e.target.checked;
-  selectedWordForTap = null;
-  // при переключении режима: делаем renderWords чтобы обновить draggable атрибуты и убрать подсветки
-  renderWords();
-});
+  renderChoices();
+  updateDebugInfo();
+};
+
+// Инициализация — если fetch уже упал и catch вызвал loadRandomText, он сработает; иначе fetch -> loadRandomText.
 </script>
 
 </body>
